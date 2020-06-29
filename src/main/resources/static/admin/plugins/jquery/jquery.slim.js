@@ -3240,7 +3240,7 @@ jQuery.Callbacks = function( options ) {
 		fired,
 
 		// Flag to prevent firing
-		locked,
+		status,
 
 		// Actual callback list
 		list = [],
@@ -3255,7 +3255,7 @@ jQuery.Callbacks = function( options ) {
 		fire = function() {
 
 			// Enforce single-firing
-			locked = locked || options.once;
+			status = status || options.once;
 
 			// Execute callbacks for all pending executions,
 			// respecting firingIndex overrides and runtime changes
@@ -3283,7 +3283,7 @@ jQuery.Callbacks = function( options ) {
 			firing = false;
 
 			// Clean up if we're done firing for good
-			if ( locked ) {
+			if ( status ) {
 
 				// Keep an empty list if we have data for future add calls
 				if ( memory ) {
@@ -3366,7 +3366,7 @@ jQuery.Callbacks = function( options ) {
 			// Abort any current/pending executions
 			// Clear all callbacks and values
 			disable: function() {
-				locked = queue = [];
+				status = queue = [];
 				list = memory = "";
 				return this;
 			},
@@ -3378,19 +3378,19 @@ jQuery.Callbacks = function( options ) {
 			// Also disable .add unless we have memory (since it would have no effect)
 			// Abort any pending executions
 			lock: function() {
-				locked = queue = [];
+				status = queue = [];
 				if ( !memory && !firing ) {
 					list = memory = "";
 				}
 				return this;
 			},
-			locked: function() {
-				return !!locked;
+			status: function() {
+				return !!status;
 			},
 
 			// Call all callbacks with the given context and arguments
 			fireWith: function( context, args ) {
-				if ( !locked ) {
+				if ( !status ) {
 					args = args || [];
 					args = [ context, args.slice ? args.slice() : args ];
 					queue.push( args );
