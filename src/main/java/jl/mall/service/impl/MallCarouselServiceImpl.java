@@ -14,6 +14,7 @@ import jl.mall.entity.Carousel;
 import jl.mall.service.MallCarouselService;
 import jl.mall.util.PageQueryUtil;
 import jl.mall.util.PageResult;
+import jl.mall.util.SystemUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,8 @@ public class MallCarouselServiceImpl implements MallCarouselService {
 
     @Override
     public String saveCarousel(Carousel carousel) {
+        carousel.setCreateTime(new Date());
+        carousel.setCreateUser(SystemUtil.getAdminUserId());
         if (carouselMapper.insertSelective(carousel) > 0) {
             return ServiceResultEnum.SUCCESS.getResult();
         }

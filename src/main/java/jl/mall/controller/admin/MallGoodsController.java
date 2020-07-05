@@ -11,15 +11,15 @@ package jl.mall.controller.admin;
 import com.alibaba.fastjson.JSON;
 import jl.mall.common.Constants;
 import jl.mall.common.MallCategoryLevelEnum;
+import jl.mall.common.MallException;
 import jl.mall.common.ServiceResultEnum;
+import jl.mall.config.annotion.TokenToMallUser;
 import jl.mall.entity.GoodsCategory;
 import jl.mall.entity.MallGoods;
+import jl.mall.entity.MallUser;
 import jl.mall.service.MallCategoryService;
 import jl.mall.service.MallGoodsService;
-import jl.mall.util.PageQueryUtil;
-import jl.mall.util.Result;
-import jl.mall.util.ResultGenerator;
-import jl.mall.util.SystemUtil;
+import jl.mall.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -28,10 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author joy
@@ -163,7 +160,6 @@ public class MallGoodsController {
                 || StringUtils.isEmpty(mallGoods.getGoodsDetailContent())) {
             return ResultGenerator.genFailResult("参数异常！");
         }
-        log.info("savegoods1：{}",JSON.toJSONString(SystemUtil.getAdminUserId()));
         String result = mallGoodsService.saveNewBeeMallGoods(mallGoods);
         if (ServiceResultEnum.SUCCESS.getResult().equals(result)) {
             return ResultGenerator.genSuccessResult();
@@ -231,5 +227,75 @@ public class MallGoodsController {
             return ResultGenerator.genFailResult("修改失败");
         }
     }
+
+
+    /**
+     * 商品搜索接口
+     * 根据关键字和分类id进行搜索
+     *
+     * @param keyword
+     * @param goodsCategoryId
+     * @param orderBy
+     * @param pageNumber
+     * @param loginMallUser
+     * @return
+     */
+    @GetMapping("/search")
+    public Result<PageResult<List<MallGoods>>> search(@RequestParam(required = false) String keyword,
+                        @RequestParam(required = false)  Long goodsCategoryId, @RequestParam(required = false)  String orderBy,
+                        @RequestParam(required = false)  Integer pageNumber, @TokenToMallUser MallUser loginMallUser) {
+
+        log.info("goods search api,keyword={},goodsCategoryId={},orderBy={},pageNumber={},userId={}", keyword, goodsCategoryId, orderBy, pageNumber, loginMallUser.getUserId());
+
+        Map params = new HashMap(4);
+        //两个搜索参数都为空，直接返回异常
+        if (goodsCategoryId == null && StringUtils.isEmpty(keyword)) {
+            MallException.fail("非法的搜索参数");
+        }
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+        params.put("goodsCategoryId", goodsCategoryId);
+        params.put("page", pageNumber);
+        params.put("limit", Constants.GOODS_SEARCH_PAGE_LIMIT);
+        //对keyword做过滤 去掉空格
+        if (!StringUtils.isEmpty(keyword)) {
+            params.put("keyword", keyword);
+        }
+        if (!StringUtils.isEmpty(orderBy)) {
+            params.put("orderBy", orderBy);
+        }
+        //搜索上架状态下的商品
+        params.put("goodsSellStatus", Constants.SELL_STATUS_UP);
+        //封装商品数据
+        PageQueryUtil pageUtil = new PageQueryUtil(params);
+        return ResultGenerator.genSuccessResult(mallGoodsService.searchNewBeeMallGoods(pageUtil));
+    }
+
+//    /**
+//     * 商品详情接口
+//     *
+//     * @param goodsId 传参为商品id
+//     * @param loginMallUser
+//     * @return
+//     */
+//    @GetMapping("/goods/detail/{goodsId}")
+//    public Result<NewBeeMallGoodsDetailVO> goodsDetail(@ApiParam(value = "商品id") @PathVariable("goodsId") Long goodsId, @TokenToMallUser MallUser loginMallUser) {
+//        logger.info("goods detail api,goodsId={},userId={}", goodsId, loginMallUser.getUserId());
+//        if (goodsId < 1) {
+//            return ResultGenerator.genFailResult("参数异常");
+//        }
+//        MallGoods goods = newBeeMallGoodsService.getNewBeeMallGoodsById(goodsId);
+//        if (goods == null) {
+//            return ResultGenerator.genFailResult("参数异常");
+//        }
+//        if (Constants.SELL_STATUS_UP != goods.getGoodsSellStatus()) {
+//            MallException.fail(ServiceResultEnum.GOODS_PUT_DOWN.getResult());
+//        }
+//        NewBeeMallGoodsDetailVO goodsDetailVO = new NewBeeMallGoodsDetailVO();
+//        BeanUtil.copyProperties(goods, goodsDetailVO);
+//        goodsDetailVO.setGoodsCarouselList(goods.getGoodsCarousel().split(","));
+//        return ResultGenerator.genSuccessResult(goodsDetailVO);
+//    }
 
 }

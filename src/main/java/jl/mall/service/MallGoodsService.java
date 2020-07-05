@@ -63,4 +63,14 @@ public interface MallGoodsService {
      */
     Boolean batchUpdateSellStatus(Long[] ids,int sellStatus);
 
+
+    /**
+     * 商品搜索
+     *
+     * @param pageUtil
+     * @return
+     */
+    PageResult searchNewBeeMallGoods(PageQueryUtil pageUtil);
+
+
 }

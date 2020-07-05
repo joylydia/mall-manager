@@ -14,9 +14,11 @@ import jl.mall.entity.IndexConfig;
 import jl.mall.service.MallIndexConfigService;
 import jl.mall.util.PageQueryUtil;
 import jl.mall.util.PageResult;
+import jl.mall.util.SystemUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -36,6 +38,8 @@ public class MallIndexConfigServiceImpl implements MallIndexConfigService {
     @Override
     public String saveIndexConfig(IndexConfig indexConfig) {
         //todo 判断是否存在该商品
+        indexConfig.setCreateTime(new Date());
+        indexConfig.setCreateUser(SystemUtil.getAdminUserId());
         if (indexConfigMapper.insertSelective(indexConfig) > 0) {
             return ServiceResultEnum.SUCCESS.getResult();
         }
