@@ -9,7 +9,6 @@
 package jl.mall.dao;
 
 import jl.mall.common.Mapper;
-import jl.mall.entity.AdminUser;
 import jl.mall.entity.Carousel;
 import jl.mall.util.PageQueryUtil;
 import org.apache.ibatis.annotations.Param;
@@ -17,17 +16,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface CarouselMapper extends Mapper<Carousel> {
-//    int deleteByPrimaryKey(Integer carouselId);
-//
-//    int insert(Carousel record);
-//
-//    int insertSelective(Carousel record);
-//
-//    Carousel selectByPrimaryKey(Integer carouselId);
-//
-//    int updateByPrimaryKeySelective(Carousel record);
-//
-//    int updateByPrimaryKey(Carousel record);
 
     List<Carousel> findCarouselList(PageQueryUtil pageUtil);
 

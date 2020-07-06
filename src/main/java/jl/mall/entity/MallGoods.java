@@ -8,13 +8,11 @@
  */
 package jl.mall.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Data
 @ToString
@@ -45,7 +43,7 @@ public class MallGoods extends BaseEntity{
     private BigDecimal originalPrice;
 
     @Column(name="selling_price",nullable = false)
-    private Integer sellingPrice;
+    private BigDecimal sellingPrice;
 
     @Column(name="stock_num",nullable = false)
     private Integer stockNum;

@@ -15,13 +15,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface MallOrderItemMapper extends Mapper<MallOrderItem> {
-//    int deleteByPrimaryKey(Long orderItemId);
-//
-//    int insert(MallOrderItem record);
-//
-//    int insertSelective(MallOrderItem record);
-//
-//    MallOrderItem selectByPrimaryKey(Long orderItemId);
 
     /**
      * 根据订单id获取订单项列表
@@ -47,7 +40,4 @@ public interface MallOrderItemMapper extends Mapper<MallOrderItem> {
      */
     int insertBatch(@Param("orderItems") List<MallOrderItem> orderItems);
 
-//    int updateByPrimaryKeySelective(MallOrderItem record);
-//
-//    int updateByPrimaryKey(MallOrderItem record);
 }

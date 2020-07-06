@@ -73,4 +73,7 @@ public interface MallGoodsService {
     PageResult searchNewBeeMallGoods(PageQueryUtil pageUtil);
 
 
+    public PageResult searchMallGoods(PageQueryUtil pageUtil);
+
+
 }

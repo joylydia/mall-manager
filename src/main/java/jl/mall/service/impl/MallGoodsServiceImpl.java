@@ -10,10 +10,10 @@ package jl.mall.service.impl;
 
 import jl.mall.common.ServiceResultEnum;
 import jl.mall.dao.MallGoodsMapper;
-import jl.mall.entity.AdminUser;
 import jl.mall.entity.MallGoods;
 import jl.mall.service.MallGoodsService;
 import jl.mall.util.*;
+import jl.mall.vo.MallSearchGoodsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -101,6 +101,31 @@ public class MallGoodsServiceImpl implements MallGoodsService {
             }
         }
         PageResult pageResult = new PageResult(newBeeMallSearchGoodsVOS, total, pageUtil.getLimit(), pageUtil.getPage());
+        return pageResult;
+    }
+
+    @Override
+    public PageResult searchMallGoods(PageQueryUtil pageUtil) {
+        List<MallGoods> goodsList = goodsMapper.findNewBeeMallGoodsListBySearch(pageUtil);
+        int total = goodsMapper.getTotalNewBeeMallGoodsBySearch(pageUtil);
+        List<MallSearchGoodsVO> mallSearchGoodsVOS = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(goodsList)) {
+            mallSearchGoodsVOS = BeanUtil.copyList(goodsList, MallSearchGoodsVO.class);
+            for (MallSearchGoodsVO mallSearchGoodsVO : mallSearchGoodsVOS) {
+                String goodsName = mallSearchGoodsVO.getGoodsName();
+                String goodsIntro = mallSearchGoodsVO.getGoodsIntro();
+                // 字符串过长导致文字超出的问题
+                if (goodsName.length() > 28) {
+                    goodsName = goodsName.substring(0, 28) + "...";
+                    mallSearchGoodsVO.setGoodsName(goodsName);
+                }
+                if (goodsIntro.length() > 30) {
+                    goodsIntro = goodsIntro.substring(0, 30) + "...";
+                    mallSearchGoodsVO.setGoodsIntro(goodsIntro);
+                }
+            }
+        }
+        PageResult pageResult = new PageResult(mallSearchGoodsVOS, total, pageUtil.getLimit(), pageUtil.getPage());
         return pageResult;
     }
 }

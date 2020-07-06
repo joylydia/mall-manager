@@ -46,6 +46,7 @@ public class MallGoodsCategoryController {
         return "admin/mall_category";
     }
 
+
     /**
      * 列表
      */

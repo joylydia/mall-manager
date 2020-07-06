@@ -16,19 +16,9 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface MallOrderMapper  extends Mapper<MallOrder> {
-//    int deleteByPrimaryKey(Long orderId);
-//
-//    int insert(MallOrder record);
-//
-//    int insertSelective(MallOrder record);
-//
-//    MallOrder selectByPrimaryKey(Long orderId);
 
     MallOrder selectByOrderNo(String orderNo);
 
-//    int updateByPrimaryKeySelective(MallOrder record);
-//
-//    int updateByPrimaryKey(MallOrder record);
 
     List<MallOrder> findNewBeeMallOrderList(PageQueryUtil pageUtil);
 

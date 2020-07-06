@@ -11,6 +11,7 @@ package jl.mall.service;
 import jl.mall.entity.GoodsCategory;
 import jl.mall.util.PageQueryUtil;
 import jl.mall.util.PageResult;
+import jl.mall.vo.MallIndexCategoryVO;
 
 import java.util.List;
 
@@ -39,4 +40,8 @@ public interface MallCategoryService {
      * @return
      */
     List<GoodsCategory> selectByLevelAndParentIdsAndNumber(List<Long> parentIds, int categoryLevel);
+
+
+
+    public List<MallIndexCategoryVO> getCategoriesForIndex();
 }

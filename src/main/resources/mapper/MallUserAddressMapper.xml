@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+严肃声明：
+开源版本请务必保留此注释头信息，若删除我方将保留所有法律责任追究！
+本软件已申请软件著作权，受国家版权局知识产权以及国家计算机软件著作权保护！
+可正常分享和学习源码，不得用于违法犯罪活动，违者必究！
+Copyright (c) 2020 十三 all rights reserved.
+版权所有，侵权必究！
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ltd.newbee.mall.dao.MallUserAddressMapper">
+    <resultMap id="BaseResultMap" type="jl.mall.entity.MallUserAddress">
+        <id column="address_id" jdbcType="BIGINT" property="addressId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_phone" jdbcType="VARCHAR" property="userPhone"/>
+        <result column="default_flag" jdbcType="TINYINT" property="defaultFlag"/>
+        <result column="province_name" jdbcType="VARCHAR" property="provinceName"/>
+        <result column="city_name" jdbcType="VARCHAR" property="cityName"/>
+        <result column="region_name" jdbcType="VARCHAR" property="regionName"/>
+        <result column="detail_address" jdbcType="VARCHAR" property="detailAddress"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    address_id, user_id, user_name, user_phone, default_flag, province_name, city_name, 
+    region_name, detail_address, status, create_time, update_time
+  </sql>
+
+    <select id="getMyDefaultAddress" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from jl_mall_user_address
+        where user_id = #{userId} and default_flag =1 and status = 0 limit 1
+    </select>
+    <select id="findMyAddressList" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from jl_mall_user_address
+        where user_id = #{userId} and status = 0
+        order by address_id desc
+        limit 20 <!-- 最多返回20条 -->
+    </select>
+
+</mapper>

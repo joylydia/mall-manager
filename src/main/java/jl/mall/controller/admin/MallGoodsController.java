@@ -9,6 +9,8 @@
 package jl.mall.controller.admin;
 
 import com.alibaba.fastjson.JSON;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import jl.mall.common.Constants;
 import jl.mall.common.MallCategoryLevelEnum;
 import jl.mall.common.MallException;
@@ -20,6 +22,8 @@ import jl.mall.entity.MallUser;
 import jl.mall.service.MallCategoryService;
 import jl.mall.service.MallGoodsService;
 import jl.mall.util.*;
+import jl.mall.vo.MallGoodsDetailVO;
+import jl.mall.vo.MallSearchGoodsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -229,6 +233,35 @@ public class MallGoodsController {
     }
 
 
+
+
+//    /**
+//     * 商品详情接口
+//     *
+//     * @param goodsId 传参为商品id
+//     * @param loginMallUser
+//     * @return
+//     */
+//    @GetMapping("/goods/detail/{goodsId}")
+//    public Result<NewBeeMallGoodsDetailVO> goodsDetail(@ApiParam(value = "商品id") @PathVariable("goodsId") Long goodsId, @TokenToMallUser MallUser loginMallUser) {
+//        log.info("goods detail api,goodsId={},userId={}", goodsId, loginMallUser.getUserId());
+//        if (goodsId < 1) {
+//            return ResultGenerator.genFailResult("参数异常");
+//        }
+//        MallGoods goods = mallGoodsService.getNewBeeMallGoodsById(goodsId);
+//        if (goods == null) {
+//            return ResultGenerator.genFailResult("参数异常");
+//        }
+//        if (Constants.SELL_STATUS_UP != goods.getGoodsSellStatus()) {
+//            MallException.fail(ServiceResultEnum.GOODS_PUT_DOWN.getResult());
+//        }
+//        NewBeeMallGoodsDetailVO goodsDetailVO = new NewBeeMallGoodsDetailVO();
+//        BeanUtil.copyProperties(goods, goodsDetailVO);
+//        goodsDetailVO.setGoodsCarouselList(goods.getGoodsCarousel().split(","));
+//        return ResultGenerator.genSuccessResult(goodsDetailVO);
+//    }
+
+
     /**
      * 商品搜索接口
      * 根据关键字和分类id进行搜索
@@ -241,9 +274,12 @@ public class MallGoodsController {
      * @return
      */
     @GetMapping("/search")
-    public Result<PageResult<List<MallGoods>>> search(@RequestParam(required = false) String keyword,
-                        @RequestParam(required = false)  Long goodsCategoryId, @RequestParam(required = false)  String orderBy,
-                        @RequestParam(required = false)  Integer pageNumber, @TokenToMallUser MallUser loginMallUser) {
+    @ApiOperation(value = "商品搜索接口", notes = "根据关键字和分类id进行搜索")
+    public Result<PageResult<List<MallSearchGoodsVO>>> search(@RequestParam(required = false) @ApiParam(value = "搜索关键字") String keyword,
+                                                              @RequestParam(required = false) @ApiParam(value = "分类id") Long goodsCategoryId,
+                                                              @RequestParam(required = false) @ApiParam(value = "orderBy") String orderBy,
+                                                              @RequestParam(required = false) @ApiParam(value = "页码") Integer pageNumber,
+                                                              @TokenToMallUser MallUser loginMallUser) {
 
         log.info("goods search api,keyword={},goodsCategoryId={},orderBy={},pageNumber={},userId={}", keyword, goodsCategoryId, orderBy, pageNumber, loginMallUser.getUserId());
 
@@ -269,33 +305,27 @@ public class MallGoodsController {
         params.put("goodsSellStatus", Constants.SELL_STATUS_UP);
         //封装商品数据
         PageQueryUtil pageUtil = new PageQueryUtil(params);
-        return ResultGenerator.genSuccessResult(mallGoodsService.searchNewBeeMallGoods(pageUtil));
+        return ResultGenerator.genSuccessResult(mallGoodsService.searchMallGoods(pageUtil));
     }
 
-//    /**
-//     * 商品详情接口
-//     *
-//     * @param goodsId 传参为商品id
-//     * @param loginMallUser
-//     * @return
-//     */
-//    @GetMapping("/goods/detail/{goodsId}")
-//    public Result<NewBeeMallGoodsDetailVO> goodsDetail(@ApiParam(value = "商品id") @PathVariable("goodsId") Long goodsId, @TokenToMallUser MallUser loginMallUser) {
-//        logger.info("goods detail api,goodsId={},userId={}", goodsId, loginMallUser.getUserId());
-//        if (goodsId < 1) {
-//            return ResultGenerator.genFailResult("参数异常");
-//        }
-//        MallGoods goods = newBeeMallGoodsService.getNewBeeMallGoodsById(goodsId);
-//        if (goods == null) {
-//            return ResultGenerator.genFailResult("参数异常");
-//        }
-//        if (Constants.SELL_STATUS_UP != goods.getGoodsSellStatus()) {
-//            MallException.fail(ServiceResultEnum.GOODS_PUT_DOWN.getResult());
-//        }
-//        NewBeeMallGoodsDetailVO goodsDetailVO = new NewBeeMallGoodsDetailVO();
-//        BeanUtil.copyProperties(goods, goodsDetailVO);
-//        goodsDetailVO.setGoodsCarouselList(goods.getGoodsCarousel().split(","));
-//        return ResultGenerator.genSuccessResult(goodsDetailVO);
-//    }
+    @GetMapping("/goods/detail/{goodsId}")
+    @ApiOperation(value = "商品详情接口", notes = "传参为商品id")
+    public Result<MallGoodsDetailVO> goodsDetail(@ApiParam(value = "商品id") @PathVariable("goodsId") Long goodsId, @TokenToMallUser MallUser loginMallUser) {
+        log.info("goods detail api,goodsId={},userId={}", goodsId, loginMallUser.getUserId());
+        if (goodsId < 1) {
+            return ResultGenerator.genFailResult("参数异常");
+        }
+        MallGoods goods = mallGoodsService.getNewBeeMallGoodsById(goodsId);
+        if (goods == null) {
+            return ResultGenerator.genFailResult("参数异常");
+        }
+        if (Constants.SELL_STATUS_UP != goods.getGoodsSellStatus()) {
+            MallException.fail(ServiceResultEnum.GOODS_PUT_DOWN.getResult());
+        }
+        MallGoodsDetailVO goodsDetailVO = new MallGoodsDetailVO();
+        BeanUtil.copyProperties(goods, goodsDetailVO);
+        goodsDetailVO.setGoodsCarouselList(goods.getGoodsCarousel().split(","));
+        return ResultGenerator.genSuccessResult(goodsDetailVO);
+    }
 
 }

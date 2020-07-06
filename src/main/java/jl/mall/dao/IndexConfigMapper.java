@@ -16,17 +16,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface IndexConfigMapper extends Mapper<IndexConfig> {
-//    int deleteByPrimaryKey(Long configId);
-//
-//    int insert(IndexConfig record);
-//
-//    int insertSelective(IndexConfig record);
-//
-//    IndexConfig selectByPrimaryKey(Long configId);
-//
-//    int updateByPrimaryKeySelective(IndexConfig record);
-//
-//    int updateByPrimaryKey(IndexConfig record);
 
     List<IndexConfig> findIndexConfigList(PageQueryUtil pageUtil);
 

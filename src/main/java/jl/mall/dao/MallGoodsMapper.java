@@ -9,7 +9,6 @@
 package jl.mall.dao;
 
 import jl.mall.common.Mapper;
-import jl.mall.entity.IndexConfig;
 import jl.mall.entity.MallGoods;
 import jl.mall.entity.StockNumDTO;
 import jl.mall.util.PageQueryUtil;
@@ -18,19 +17,8 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface MallGoodsMapper extends Mapper<MallGoods> {
-//    int deleteByPrimaryKey(Long goodsId);
-//
-//    int insert(MallGoods record);
-//
-//    int insertSelective(MallGoods record);
-//
-//    MallGoods selectByPrimaryKey(Long goodsId);
-//
-//    int updateByPrimaryKeySelective(MallGoods record);
 
     int updateByPrimaryKeyWithBLOBs(MallGoods record);
-
-//    int updateByPrimaryKey(MallGoods record);
 
     List<MallGoods> findNewBeeMallGoodsList(PageQueryUtil pageUtil);
 

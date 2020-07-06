@@ -12,12 +12,16 @@ import jl.mall.common.ServiceResultEnum;
 import jl.mall.dao.CarouselMapper;
 import jl.mall.entity.Carousel;
 import jl.mall.service.MallCarouselService;
+import jl.mall.util.BeanUtil;
 import jl.mall.util.PageQueryUtil;
 import jl.mall.util.PageResult;
 import jl.mall.util.SystemUtil;
+import jl.mall.vo.MallIndexCarouselVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -73,5 +77,15 @@ public class MallCarouselServiceImpl implements MallCarouselService {
         }
         //删除数据
         return carouselMapper.deleteBatch(ids) > 0;
+    }
+
+    @Override
+    public List<MallIndexCarouselVO> getCarouselsForIndex(int number) {
+        List<MallIndexCarouselVO> mallIndexCarouselVOS = new ArrayList<>(number);
+        List<Carousel> carousels = carouselMapper.findCarouselsByNum(number);
+        if (!CollectionUtils.isEmpty(carousels)) {
+            mallIndexCarouselVOS = BeanUtil.copyList(carousels, MallIndexCarouselVO.class);
+        }
+        return mallIndexCarouselVOS;
     }
 }

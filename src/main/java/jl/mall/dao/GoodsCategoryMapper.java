@@ -9,7 +9,6 @@
 package jl.mall.dao;
 
 import jl.mall.common.Mapper;
-import jl.mall.entity.AdminUser;
 import jl.mall.entity.GoodsCategory;
 import jl.mall.util.PageQueryUtil;
 import org.apache.ibatis.annotations.Param;
@@ -17,19 +16,8 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface GoodsCategoryMapper extends Mapper<GoodsCategory> {
-//    int deleteByPrimaryKey(Long categoryId);
-//
-//    int insert(GoodsCategory record);
-//
-//    int insertSelective(GoodsCategory record);
-
-//    GoodsCategory selectByPrimaryKey(Long categoryId);
 
     GoodsCategory selectByLevelAndName(@Param("categoryLevel") Byte categoryLevel, @Param("categoryName") String categoryName);
-
-//    int updateByPrimaryKeySelective(GoodsCategory record);
-
-//    int updateByPrimaryKey(GoodsCategory record);
 
     List<GoodsCategory> findGoodsCategoryList(PageQueryUtil pageUtil);
 

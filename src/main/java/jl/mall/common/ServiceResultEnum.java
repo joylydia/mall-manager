@@ -74,6 +74,12 @@ public enum ServiceResultEnum {
 
     REQUEST_FORBIDEN_ERROR("禁止该操作！"),
 
+    LOGIN_NAME_IS_NOT_PHONE("请输入正确的手机号！"),
+
+    LOGIN_USER_NOT_EXIST("用户不存在！"),
+
+    LOGIN_PASSWORD_ERROR("密码错误！"),
+
     DB_ERROR("database error");
 
     private String result;
