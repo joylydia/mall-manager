@@ -19,28 +19,23 @@
     order_id, order_no, user_id, total_price, pay_status, pay_type, pay_time, order_status,
     extra_info, status, create_time, update_time
   </sql>
-<!--    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">-->
-<!--        select-->
-<!--        <include refid="Base_Column_List"/>-->
-<!--        from jl_mall_order-->
-<!--        where order_id = #{orderId,jdbcType=BIGINT}-->
-<!--    </select>-->
+
     <select id="selectByOrderNo" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from jl_mall_order
         where order_no = #{orderNo,jdbcType=VARCHAR} and status=0 limit 1
     </select>
-<!--    <select id="selectByPrimaryKeys" resultMap="BaseResultMap">-->
-<!--        select-->
-<!--        <include refid="Base_Column_List"/>-->
-<!--        from jl_mall_order-->
-<!--        where order_id in-->
-<!--        <foreach collection="orderIds" item="item" index="index"-->
-<!--                 open="(" separator="," close=")">#{item}-->
-<!--        </foreach>-->
-<!--    </select>-->
-    <select id="findNewBeeMallOrderList" parameterType="Map" resultMap="BaseResultMap">
+    <select id="selectListByKeys" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from jl_mall_order
+        where order_id in
+        <foreach collection="orderIds" item="item" index="index"
+                 open="(" separator="," close=")">#{item}
+        </foreach>
+    </select>
+    <select id="findMallOrderList" parameterType="Map" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from jl_mall_order
@@ -54,7 +49,7 @@
             <if test="payType!=null and payType!=''">
                 and pay_type = #{payType}
             </if>
-            <if test="orderStatus!=null">
+            <if test="orderStatus!=null and orderStatus !=''">
                 and order_status = #{orderStatus}
             </if>
             <if test="status!=null and status!=''">
@@ -73,7 +68,7 @@
         </if>
     </select>
 
-    <select id="getTotalNewBeeMallOrders" parameterType="Map" resultType="int">
+    <select id="getTotalMallOrders" parameterType="Map" resultType="int">
         select count(*) from jl_mall_order
         <where>
             <if test="orderNo!=null and orderNo!=''">

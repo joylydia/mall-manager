@@ -1,19 +1,14 @@
-/**
- * 严肃声明：
- * 开源版本请务必保留此注释头信息，若删除我方将保留所有法律责任追究！
- * 本软件已申请软件著作权，受国家版权局知识产权以及国家计算机软件著作权保护！
- * 可正常分享和学习源码，不得用于违法犯罪活动，违者必究！
- * Copyright (c) 2020 十三 all rights reserved.
- * 版权所有，侵权必究！
- */
+
 package jl.mall.service.impl;
 
 import jl.mall.common.ServiceResultEnum;
 import jl.mall.dao.MallGoodsMapper;
 import jl.mall.entity.MallGoods;
 import jl.mall.service.MallGoodsService;
-import jl.mall.util.*;
-import jl.mall.vo.MallSearchGoodsVO;
+import jl.mall.util.BeanUtil;
+import jl.mall.util.PageQueryUtil;
+import jl.mall.util.PageResult;
+import jl.mall.util.SystemUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,15 +26,15 @@ public class MallGoodsServiceImpl implements MallGoodsService {
     private MallGoodsMapper goodsMapper;
 
     @Override
-    public PageResult getNewBeeMallGoodsPage(PageQueryUtil pageUtil) {
-        List<MallGoods> goodsList = goodsMapper.findNewBeeMallGoodsList(pageUtil);
-        int total = goodsMapper.getTotalNewBeeMallGoods(pageUtil);
+    public PageResult getMallGoodsPage(PageQueryUtil pageUtil) {
+        List<MallGoods> goodsList = goodsMapper.findMallGoodsList(pageUtil);
+        int total = goodsMapper.getTotalMallGoods(pageUtil);
         PageResult pageResult = new PageResult(goodsList, total, pageUtil.getLimit(), pageUtil.getPage());
         return pageResult;
     }
 
     @Override
-    public String saveNewBeeMallGoods(MallGoods goods) {
+    public String saveMallGoods(MallGoods goods) {
         goods.setCreateTime(new Date());
         goods.setCreateUser(SystemUtil.getAdminUserId());
         if (goodsMapper.insertSelective(goods) > 0) {
@@ -49,14 +44,14 @@ public class MallGoodsServiceImpl implements MallGoodsService {
     }
 
     @Override
-    public void batchSaveNewBeeMallGoods(List<MallGoods> mallGoodsList) {
+    public void batchSaveMallGoods(List<MallGoods> mallGoodsList) {
         if (!CollectionUtils.isEmpty(mallGoodsList)) {
             goodsMapper.batchInsert(mallGoodsList);
         }
     }
 
     @Override
-    public String updateNewBeeMallGoods(MallGoods goods) {
+    public String updateMallGoods(MallGoods goods) {
         MallGoods temp = goodsMapper.selectByPrimaryKey(goods.getGoodsId());
         if (temp == null) {
             return ServiceResultEnum.DATA_NOT_EXIST.getResult();
@@ -69,7 +64,7 @@ public class MallGoodsServiceImpl implements MallGoodsService {
     }
 
     @Override
-    public MallGoods getNewBeeMallGoodsById(Long id) {
+    public MallGoods getMallGoodsById(Long id) {
         return goodsMapper.selectByPrimaryKey(id);
     }
     
@@ -80,52 +75,27 @@ public class MallGoodsServiceImpl implements MallGoodsService {
 
 
     @Override
-    public PageResult searchNewBeeMallGoods(PageQueryUtil pageUtil) {
-        List<MallGoods> goodsList = goodsMapper.findNewBeeMallGoodsListBySearch(pageUtil);
-        int total = goodsMapper.getTotalNewBeeMallGoodsBySearch(pageUtil);
-        List<MallGoods> newBeeMallSearchGoodsVOS = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(goodsList)) {
-            newBeeMallSearchGoodsVOS = BeanUtil.copyList(goodsList, MallGoods.class);
-            for (MallGoods newBeeMallSearchGoodsVO : newBeeMallSearchGoodsVOS) {
-                String goodsName = newBeeMallSearchGoodsVO.getGoodsName();
-                String goodsIntro = newBeeMallSearchGoodsVO.getGoodsIntro();
-                // 字符串过长导致文字超出的问题
-                if (goodsName.length() > 28) {
-                    goodsName = goodsName.substring(0, 28) + "...";
-                    newBeeMallSearchGoodsVO.setGoodsName(goodsName);
-                }
-                if (goodsIntro.length() > 30) {
-                    goodsIntro = goodsIntro.substring(0, 30) + "...";
-                    newBeeMallSearchGoodsVO.setGoodsIntro(goodsIntro);
-                }
-            }
-        }
-        PageResult pageResult = new PageResult(newBeeMallSearchGoodsVOS, total, pageUtil.getLimit(), pageUtil.getPage());
-        return pageResult;
-    }
-
-    @Override
     public PageResult searchMallGoods(PageQueryUtil pageUtil) {
-        List<MallGoods> goodsList = goodsMapper.findNewBeeMallGoodsListBySearch(pageUtil);
-        int total = goodsMapper.getTotalNewBeeMallGoodsBySearch(pageUtil);
-        List<MallSearchGoodsVO> mallSearchGoodsVOS = new ArrayList<>();
+        List<MallGoods> goodsList = goodsMapper.findMallGoodsListBySearch(pageUtil);
+        int total = goodsMapper.getTotalMallGoodsBySearch(pageUtil);
+        List<MallGoods> MallSearchGoodsVOS = new ArrayList<>();
         if (!CollectionUtils.isEmpty(goodsList)) {
-            mallSearchGoodsVOS = BeanUtil.copyList(goodsList, MallSearchGoodsVO.class);
-            for (MallSearchGoodsVO mallSearchGoodsVO : mallSearchGoodsVOS) {
-                String goodsName = mallSearchGoodsVO.getGoodsName();
-                String goodsIntro = mallSearchGoodsVO.getGoodsIntro();
+            MallSearchGoodsVOS = BeanUtil.copyList(goodsList, MallGoods.class);
+            for (MallGoods MallSearchGoodsVO : MallSearchGoodsVOS) {
+                String goodsName = MallSearchGoodsVO.getGoodsName();
+                String goodsIntro = MallSearchGoodsVO.getGoodsIntro();
                 // 字符串过长导致文字超出的问题
                 if (goodsName.length() > 28) {
                     goodsName = goodsName.substring(0, 28) + "...";
-                    mallSearchGoodsVO.setGoodsName(goodsName);
+                    MallSearchGoodsVO.setGoodsName(goodsName);
                 }
                 if (goodsIntro.length() > 30) {
                     goodsIntro = goodsIntro.substring(0, 30) + "...";
-                    mallSearchGoodsVO.setGoodsIntro(goodsIntro);
+                    MallSearchGoodsVO.setGoodsIntro(goodsIntro);
                 }
             }
         }
-        PageResult pageResult = new PageResult(mallSearchGoodsVOS, total, pageUtil.getLimit(), pageUtil.getPage());
+        PageResult pageResult = new PageResult(MallSearchGoodsVOS, total, pageUtil.getLimit(), pageUtil.getPage());
         return pageResult;
     }
 }

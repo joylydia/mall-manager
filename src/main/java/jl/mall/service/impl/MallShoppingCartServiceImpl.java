@@ -1,11 +1,3 @@
-/**
- * 严肃声明：
- * 开源版本请务必保留此注释头信息，若删除我方将保留所有法律责任追究！
- * 本软件已申请软件著作权，受国家版权局知识产权以及国家计算机软件著作权保护！
- * 可正常分享和学习源码，不得用于违法犯罪活动，违者必究！
- * Copyright (c) 2020 十三 all rights reserved.
- * 版权所有，侵权必究！
- */
 package jl.mall.service.impl;
 
 import jl.mall.common.Constants;
@@ -40,11 +32,12 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
     private MallGoodsMapper mallGoodsMapper;
 
     @Override
-    public String saveNewBeeMallCartItem(SaveCartItemParam saveCartItemParam, Long userId) {
+    public String saveMallCartItem(SaveCartItemParam saveCartItemParam, Long userId) {
         MallShoppingCartItem temp = mallShoppingCartItemMapper.selectByUserIdAndGoodsId(userId, saveCartItemParam.getGoodsId());
         if (temp != null) {
             //已存在则修改该记录
-            MallException.fail(ServiceResultEnum.SHOPPING_CART_ITEM_EXIST_ERROR.getResult());
+//            MallException.fail(ServiceResultEnum.SHOPPING_CART_ITEM_EXIST_ERROR.getResult());
+            return ServiceResultEnum.SHOPPING_CART_ITEM_EXIST_ERROR.getResult();
         }
         MallGoods mallGoods = mallGoodsMapper.selectByPrimaryKey(saveCartItemParam.getGoodsId());
         //商品为空
@@ -74,7 +67,7 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
     }
 
     @Override
-    public String updateNewBeeMallCartItem(UpdateCartItemParam updateCartItemParam, Long userId) {
+    public String updateMallCartItem(UpdateCartItemParam updateCartItemParam, Long userId) {
         MallShoppingCartItem mallShoppingCartItemUpdate = mallShoppingCartItemMapper.selectByPrimaryKey(updateCartItemParam.getCartItemId());
         if (mallShoppingCartItemUpdate == null) {
             return ServiceResultEnum.DATA_NOT_EXIST.getResult();
@@ -96,8 +89,8 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
     }
 
     @Override
-    public MallShoppingCartItem getNewBeeMallCartItemById(Long newBeeMallShoppingCartItemId) {
-        MallShoppingCartItem mallShoppingCartItem = mallShoppingCartItemMapper.selectByPrimaryKey(newBeeMallShoppingCartItemId);
+    public MallShoppingCartItem getMallCartItemById(Long MallShoppingCartItemId) {
+        MallShoppingCartItem mallShoppingCartItem = mallShoppingCartItemMapper.selectByPrimaryKey(MallShoppingCartItemId);
         if (mallShoppingCartItem == null) {
             MallException.fail(ServiceResultEnum.DATA_NOT_EXIST.getResult());
         }
@@ -105,31 +98,31 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
     }
 
     @Override
-    public Boolean deleteById(Long newBeeMallShoppingCartItemId) {
-        return mallShoppingCartItemMapper.deleteByPrimaryKey(newBeeMallShoppingCartItemId) > 0;
+    public Boolean deleteById(Long MallShoppingCartItemId) {
+        return mallShoppingCartItemMapper.deleteByPrimaryKey(MallShoppingCartItemId) > 0;
     }
 
     @Override
-    public List<MallShoppingCartItemVO> getMyShoppingCartItems(Long newBeeMallUserId) {
+    public List<MallShoppingCartItemVO> getMyShoppingCartItems(Long userId) {
         List<MallShoppingCartItemVO> mallShoppingCartItemVOS = new ArrayList<>();
-        List<MallShoppingCartItem> mallShoppingCartItems = mallShoppingCartItemMapper.selectByUserId(newBeeMallUserId, Constants.SHOPPING_CART_ITEM_TOTAL_NUMBER);
-        return getNewBeeMallShoppingCartItemVOS(mallShoppingCartItemVOS, mallShoppingCartItems);
+        List<MallShoppingCartItem> mallShoppingCartItems = mallShoppingCartItemMapper.selectByUserId(userId, Constants.SHOPPING_CART_ITEM_TOTAL_NUMBER);
+        return getMallShoppingCartItemVOS(mallShoppingCartItemVOS, mallShoppingCartItems);
     }
 
     @Override
-    public List<MallShoppingCartItemVO> getCartItemsForSettle(List<Long> cartItemIds, Long newBeeMallUserId) {
+    public List<MallShoppingCartItemVO> getCartItemsForSettle(List<Long> cartItemIds, Long userId) {
         List<MallShoppingCartItemVO> mallShoppingCartItemVOS = new ArrayList<>();
         if (CollectionUtils.isEmpty(cartItemIds)) {
             MallException.fail("购物项不能为空");
         }
-        List<MallShoppingCartItem> mallShoppingCartItems = mallShoppingCartItemMapper.selectByUserIdAndCartItemIds(newBeeMallUserId, cartItemIds);
+        List<MallShoppingCartItem> mallShoppingCartItems = mallShoppingCartItemMapper.selectByUserIdAndCartItemIds(userId, cartItemIds);
         if (CollectionUtils.isEmpty(mallShoppingCartItems)) {
             MallException.fail("购物项不能为空");
         }
         if (mallShoppingCartItems.size() != cartItemIds.size()) {
             MallException.fail("参数异常");
         }
-        return getNewBeeMallShoppingCartItemVOS(mallShoppingCartItemVOS, mallShoppingCartItems);
+        return getMallShoppingCartItemVOS(mallShoppingCartItemVOS, mallShoppingCartItems);
     }
 
     /**
@@ -139,20 +132,20 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
      * @param mallShoppingCartItems
      * @return
      */
-    private List<MallShoppingCartItemVO> getNewBeeMallShoppingCartItemVOS(List<MallShoppingCartItemVO> mallShoppingCartItemVOS, List<MallShoppingCartItem> mallShoppingCartItems) {
+    private List<MallShoppingCartItemVO> getMallShoppingCartItemVOS(List<MallShoppingCartItemVO> mallShoppingCartItemVOS, List<MallShoppingCartItem> mallShoppingCartItems) {
         if (!CollectionUtils.isEmpty(mallShoppingCartItems)) {
             //查询商品信息并做数据转换
-            List<Long> newBeeMallGoodsIds = mallShoppingCartItems.stream().map(MallShoppingCartItem::getGoodsId).collect(Collectors.toList());
-            List<MallGoods> mallGoods = mallGoodsMapper.selectByPrimaryKeys(newBeeMallGoodsIds);
-            Map<Long, MallGoods> newBeeMallGoodsMap = new HashMap<>();
+            List<Long> MallGoodsIds = mallShoppingCartItems.stream().map(MallShoppingCartItem::getGoodsId).collect(Collectors.toList());
+            List<MallGoods> mallGoods = mallGoodsMapper.selecListByKeys(MallGoodsIds);
+            Map<Long, MallGoods> MallGoodsMap = new HashMap<>();
             if (!CollectionUtils.isEmpty(mallGoods)) {
-                newBeeMallGoodsMap = mallGoods.stream().collect(Collectors.toMap(MallGoods::getGoodsId, Function.identity(), (entity1, entity2) -> entity1));
+                MallGoodsMap = mallGoods.stream().collect(Collectors.toMap(MallGoods::getGoodsId, Function.identity(), (entity1, entity2) -> entity1));
             }
             for (MallShoppingCartItem mallShoppingCartItem : mallShoppingCartItems) {
                 MallShoppingCartItemVO mallShoppingCartItemVO = new MallShoppingCartItemVO();
                 BeanUtil.copyProperties(mallShoppingCartItem, mallShoppingCartItemVO);
-                if (newBeeMallGoodsMap.containsKey(mallShoppingCartItem.getGoodsId())) {
-                    MallGoods mallGoodsTemp = newBeeMallGoodsMap.get(mallShoppingCartItem.getGoodsId());
+                if (MallGoodsMap.containsKey(mallShoppingCartItem.getGoodsId())) {
+                    MallGoods mallGoodsTemp = MallGoodsMap.get(mallShoppingCartItem.getGoodsId());
                     mallShoppingCartItemVO.setGoodsCoverImg(mallGoodsTemp.getGoodsCoverImg());
                     String goodsName = mallGoodsTemp.getGoodsName();
                     // 字符串过长导致文字超出的问题
@@ -171,9 +164,9 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
     @Override
     public PageResult getMyShoppingCartItems(PageQueryUtil pageUtil) {
         List<MallShoppingCartItemVO> mallShoppingCartItemVOS = new ArrayList<>();
-        List<MallShoppingCartItem> mallShoppingCartItems = mallShoppingCartItemMapper.findMyNewBeeMallCartItems(pageUtil);
-        int total = mallShoppingCartItemMapper.getTotalMyNewBeeMallCartItems(pageUtil);
-        PageResult pageResult = new PageResult(getNewBeeMallShoppingCartItemVOS(mallShoppingCartItemVOS, mallShoppingCartItems), total, pageUtil.getLimit(), pageUtil.getPage());
+        List<MallShoppingCartItem> mallShoppingCartItems = mallShoppingCartItemMapper.findMyMallCartItems(pageUtil);
+        int total = mallShoppingCartItemMapper.getTotalMyMallCartItems(pageUtil);
+        PageResult pageResult = new PageResult(getMallShoppingCartItemVOS(mallShoppingCartItemVOS, mallShoppingCartItems), total, pageUtil.getLimit(), pageUtil.getPage());
         return pageResult;
     }
 }

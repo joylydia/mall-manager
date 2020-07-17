@@ -1,11 +1,4 @@
-/**
- * 严肃声明：
- * 开源版本请务必保留此注释头信息，若删除我方将保留所有法律责任追究！
- * 本软件已申请软件著作权，受国家版权局知识产权以及国家计算机软件著作权保护！
- * 可正常分享和学习源码，不得用于违法犯罪活动，违者必究！
- * Copyright (c) 2020 十三 all rights reserved.
- * 版权所有，侵权必究！
- */
+
 package jl.mall.controller.api;
 
 import com.alibaba.fastjson.JSON;
@@ -21,7 +14,7 @@ import jl.mall.service.MallUserAddressService;
 import jl.mall.util.BeanUtil;
 import jl.mall.util.Result;
 import jl.mall.util.ResultGenerator;
-import jl.mall.vo.NewBeeMallUserAddressVO;
+import jl.mall.vo.MallUserAddressVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +22,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@Api(value = "v1", tags = "6.新蜂商城个人地址相关接口")
+@Api(value = "v1", tags = "6.商城个人地址相关接口")
 //@RequestMapping("/api/v1")
 @Slf4j
 public class MallUserAddressAPI {
@@ -39,7 +32,7 @@ public class MallUserAddressAPI {
 
     @GetMapping("/address")
     @ApiOperation(value = "我的收货地址列表", notes = "")
-    public Result<List<NewBeeMallUserAddressVO>> addressList(@TokenToMallUser MallUser loginMallUser) {
+    public Result<List<MallUserAddressVO>> addressList(@TokenToMallUser MallUser loginMallUser) {
         log.info("loginMallUser:{}", JSON.toJSONString(loginMallUser));
         return ResultGenerator.genSuccessResult(mallUserAddressService.getMyAddresses(loginMallUser.getUserId()));
     }
@@ -83,15 +76,15 @@ public class MallUserAddressAPI {
 
     @GetMapping("/address/{addressId}")
     @ApiOperation(value = "获取收货地址详情", notes = "传参为地址id")
-    public Result<NewBeeMallUserAddressVO> getMallUserAddress(@PathVariable("addressId") Long addressId,
+    public Result<MallUserAddressVO> getMallUserAddress(@PathVariable("addressId") Long addressId,
                                                               @TokenToMallUser MallUser loginMallUser) {
         MallUserAddress mallUserAddressById = mallUserAddressService.getMallUserAddressById(addressId);
-        NewBeeMallUserAddressVO newBeeMallUserAddressVO = new NewBeeMallUserAddressVO();
-        BeanUtil.copyProperties(mallUserAddressById, newBeeMallUserAddressVO);
+        MallUserAddressVO MallUserAddressVO = new MallUserAddressVO();
+        BeanUtil.copyProperties(mallUserAddressById, MallUserAddressVO);
         if (!loginMallUser.getUserId().equals(mallUserAddressById.getUserId())) {
             return ResultGenerator.genFailResult(ServiceResultEnum.REQUEST_FORBIDEN_ERROR.getResult());
         }
-        return ResultGenerator.genSuccessResult(newBeeMallUserAddressVO);
+        return ResultGenerator.genSuccessResult(MallUserAddressVO);
     }
 
     @GetMapping("/address/default")

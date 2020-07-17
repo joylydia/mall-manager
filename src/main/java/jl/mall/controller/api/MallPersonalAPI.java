@@ -1,11 +1,4 @@
-/**
- * 严肃声明：
- * 开源版本请务必保留此注释头信息，若删除我方将保留所有法律责任追究！
- * 本软件已申请软件著作权，受国家版权局知识产权以及国家计算机软件著作权保护！
- * 可正常分享和学习源码，不得用于违法犯罪活动，违者必究！
- * Copyright (c) 2020 十三 all rights reserved.
- * 版权所有，侵权必究！
- */
+
 package jl.mall.controller.api;
 
 import io.swagger.annotations.Api;
@@ -23,7 +16,7 @@ import jl.mall.util.BeanUtil;
 import jl.mall.util.NumberUtil;
 import jl.mall.util.Result;
 import jl.mall.util.ResultGenerator;
-import jl.mall.vo.NewBeeMallUserVO;
+import jl.mall.vo.MallUserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -33,7 +26,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 @RestController
-@Api(value = "v1", tags = "2.新蜂商城用户操作相关接口")
+@Api(value = "v1", tags = "2.商城用户操作相关接口")
 @RequestMapping("/user")
 public class MallPersonalAPI {
 
@@ -114,9 +107,9 @@ public class MallPersonalAPI {
 
     @GetMapping("/info")
     @ApiOperation(value = "获取用户信息", notes = "")
-    public Result<NewBeeMallUserVO> getUserDetail(@TokenToMallUser MallUser loginMallUser) {
+    public Result<MallUserVO> getUserDetail(@TokenToMallUser MallUser loginMallUser) {
         //已登录则直接返回
-        NewBeeMallUserVO mallUserVO = new NewBeeMallUserVO();
+        MallUserVO mallUserVO = new MallUserVO();
         BeanUtil.copyProperties(loginMallUser, mallUserVO);
         return ResultGenerator.genSuccessResult(mallUserVO);
     }

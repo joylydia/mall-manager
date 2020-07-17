@@ -1,11 +1,4 @@
-/**
- * 严肃声明：
- * 开源版本请务必保留此注释头信息，若删除我方将保留所有法律责任追究！
- * 本软件已申请软件著作权，受国家版权局知识产权以及国家计算机软件著作权保护！
- * 可正常分享和学习源码，不得用于违法犯罪活动，违者必究！
- * Copyright (c) 2020 十三 all rights reserved.
- * 版权所有，侵权必究！
- */
+
 package jl.mall.controller.admin;
 
 import com.alibaba.fastjson.JSON;
@@ -79,7 +72,7 @@ public class MallGoodsController {
     @GetMapping("/goods/edit/{goodsId}")
     public String edit(HttpServletRequest request, @PathVariable("goodsId") Long goodsId) {
         request.setAttribute("path", "edit");
-        MallGoods mallGoods = mallGoodsService.getNewBeeMallGoodsById(goodsId);
+        MallGoods mallGoods = mallGoodsService.getMallGoodsById(goodsId);
         if (mallGoods == null) {
             return "error/error_400";
         }
@@ -143,7 +136,7 @@ public class MallGoodsController {
             return ResultGenerator.genFailResult("参数异常！");
         }
         PageQueryUtil pageUtil = new PageQueryUtil(params);
-        return ResultGenerator.genSuccessResult(mallGoodsService.getNewBeeMallGoodsPage(pageUtil));
+        return ResultGenerator.genSuccessResult(mallGoodsService.getMallGoodsPage(pageUtil));
     }
 
     /**
@@ -164,7 +157,7 @@ public class MallGoodsController {
                 || StringUtils.isEmpty(mallGoods.getGoodsDetailContent())) {
             return ResultGenerator.genFailResult("参数异常！");
         }
-        String result = mallGoodsService.saveNewBeeMallGoods(mallGoods);
+        String result = mallGoodsService.saveMallGoods(mallGoods);
         if (ServiceResultEnum.SUCCESS.getResult().equals(result)) {
             return ResultGenerator.genSuccessResult();
         } else {
@@ -192,7 +185,7 @@ public class MallGoodsController {
                 || StringUtils.isEmpty(mallGoods.getGoodsDetailContent())) {
             return ResultGenerator.genFailResult("参数异常！");
         }
-        String result = mallGoodsService.updateNewBeeMallGoods(mallGoods);
+        String result = mallGoodsService.updateMallGoods(mallGoods);
         if (ServiceResultEnum.SUCCESS.getResult().equals(result)) {
             return ResultGenerator.genSuccessResult();
         } else {
@@ -206,7 +199,7 @@ public class MallGoodsController {
     @GetMapping("/goods/info/{id}")
     @ResponseBody
     public Result info(@PathVariable("id") Long id) {
-        MallGoods goods = mallGoodsService.getNewBeeMallGoodsById(id);
+        MallGoods goods = mallGoodsService.getMallGoodsById(id);
         if (goods == null) {
             return ResultGenerator.genFailResult(ServiceResultEnum.DATA_NOT_EXIST.getResult());
         }
@@ -243,19 +236,19 @@ public class MallGoodsController {
 //     * @return
 //     */
 //    @GetMapping("/goods/detail/{goodsId}")
-//    public Result<NewBeeMallGoodsDetailVO> goodsDetail(@ApiParam(value = "商品id") @PathVariable("goodsId") Long goodsId, @TokenToMallUser MallUser loginMallUser) {
+//    public Result<MallGoodsDetailVO> goodsDetail(@ApiParam(value = "商品id") @PathVariable("goodsId") Long goodsId, @TokenToMallUser MallUser loginMallUser) {
 //        log.info("goods detail api,goodsId={},userId={}", goodsId, loginMallUser.getUserId());
 //        if (goodsId < 1) {
 //            return ResultGenerator.genFailResult("参数异常");
 //        }
-//        MallGoods goods = mallGoodsService.getNewBeeMallGoodsById(goodsId);
+//        MallGoods goods = mallGoodsService.getMallGoodsById(goodsId);
 //        if (goods == null) {
 //            return ResultGenerator.genFailResult("参数异常");
 //        }
 //        if (Constants.SELL_STATUS_UP != goods.getGoodsSellStatus()) {
 //            MallException.fail(ServiceResultEnum.GOODS_PUT_DOWN.getResult());
 //        }
-//        NewBeeMallGoodsDetailVO goodsDetailVO = new NewBeeMallGoodsDetailVO();
+//        MallGoodsDetailVO goodsDetailVO = new MallGoodsDetailVO();
 //        BeanUtil.copyProperties(goods, goodsDetailVO);
 //        goodsDetailVO.setGoodsCarouselList(goods.getGoodsCarousel().split(","));
 //        return ResultGenerator.genSuccessResult(goodsDetailVO);
@@ -315,7 +308,7 @@ public class MallGoodsController {
         if (goodsId < 1) {
             return ResultGenerator.genFailResult("参数异常");
         }
-        MallGoods goods = mallGoodsService.getNewBeeMallGoodsById(goodsId);
+        MallGoods goods = mallGoodsService.getMallGoodsById(goodsId);
         if (goods == null) {
             return ResultGenerator.genFailResult("参数异常");
         }

@@ -1,17 +1,11 @@
-/**
- * 严肃声明：
- * 开源版本请务必保留此注释头信息，若删除我方将保留所有法律责任追究！
- * 本软件已申请软件著作权，受国家版权局知识产权以及国家计算机软件著作权保护！
- * 可正常分享和学习源码，不得用于违法犯罪活动，违者必究！
- * Copyright (c) 2020 十三 all rights reserved.
- * 版权所有，侵权必究！
- */
+
 package jl.mall.vo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 商品详情页VO
@@ -32,7 +26,7 @@ public class MallGoodsDetailVO implements Serializable {
     private String goodsCoverImg;
 
     @ApiModelProperty("商品价格")
-    private Integer sellingPrice;
+    private BigDecimal sellingPrice;
 
     @ApiModelProperty("商品标签")
     private String tag;
@@ -41,7 +35,7 @@ public class MallGoodsDetailVO implements Serializable {
     private String[] goodsCarouselList;
 
     @ApiModelProperty("商品原价")
-    private Integer originalPrice;
+    private BigDecimal originalPrice;
 
     @ApiModelProperty("商品详情字段")
     private String goodsDetailContent;

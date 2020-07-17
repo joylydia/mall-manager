@@ -40,14 +40,7 @@
             (#{goods.goodsName},#{goods.goodsIntro},#{goods.goodsCategoryId},#{goods.goodsCoverImg},#{goods.goodsCarousel},#{goods.goodsDetailContent},#{goods.originalPrice},#{goods.sellingPrice},#{goods.stockNum})
         </foreach>
     </insert>
-<!--    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">-->
-<!--        select-->
-<!--        <include refid="Base_Column_List"/>-->
-<!--        ,-->
-<!--        <include refid="Blob_Column_List"/>-->
-<!--        from jl_mall_goods_info-->
-<!--        where goods_id = #{goodsId,jdbcType=BIGINT}-->
-<!--    </select>-->
+
     <update id="updateStockNum">
         <foreach collection="stockNumDTOS" item="stockNumDTO">
             update jl_mall_goods_info set stock_num = stock_num-#{stockNumDTO.goodsCount}
@@ -61,7 +54,7 @@
             #{id}
         </foreach>
     </update>
-    <select id="findNewBeeMallGoodsList" parameterType="Map" resultMap="BaseResultMap">
+    <select id="findMallGoodsList" parameterType="Map" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from jl_mall_goods_info
@@ -85,7 +78,7 @@
         </if>
     </select>
 
-    <select id="findNewBeeMallGoodsListBySearch" parameterType="Map" resultMap="BaseResultMap">
+    <select id="findMallGoodsListBySearch" parameterType="Map" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from jl_mall_goods_info
@@ -118,7 +111,7 @@
         </if>
     </select>
 
-    <select id="getTotalNewBeeMallGoodsBySearch" parameterType="Map" resultType="int">
+    <select id="getTotalMallGoodsBySearch" parameterType="Map" resultType="int">
         select count(*) from jl_mall_goods_info
         <where>
             <if test="keyword!=null and keyword!=''">
@@ -130,21 +123,21 @@
         </where>
     </select>
 
-<!--    <select id="selectByPrimaryKeys" resultMap="BaseResultMap">-->
-<!--        select-->
-<!--        <include refid="Base_Column_List"/>-->
-<!--        from jl_mall_goods_info-->
-<!--        where goods_id in-->
-<!--        <foreach item="id" collection="list" open="(" separator="," close=")">-->
-<!--            #{id}-->
-<!--        </foreach>-->
-<!--        order by field(goods_id,-->
-<!--        <foreach item="id" collection="list" separator=",">-->
-<!--            #{id}-->
-<!--        </foreach>-->
-<!--        );-->
-<!--    </select>-->
-    <select id="getTotalNewBeeMallGoods" parameterType="Map" resultType="int">
+    <select id="selecListByKeys" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from jl_mall_goods_info
+        where goods_id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        order by field(goods_id,
+        <foreach item="id" collection="list" separator=",">
+            #{id}
+        </foreach>
+        );
+    </select>
+    <select id="getTotalMallGoods" parameterType="Map" resultType="int">
         select count(*) from jl_mall_goods_info
         <where>
             <if test="goodsName!=null and goodsName!=''">

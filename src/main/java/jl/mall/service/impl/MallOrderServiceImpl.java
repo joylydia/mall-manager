@@ -1,25 +1,19 @@
-/**
- * 严肃声明：
- * 开源版本请务必保留此注释头信息，若删除我方将保留所有法律责任追究！
- * 本软件已申请软件著作权，受国家版权局知识产权以及国家计算机软件著作权保护！
- * 可正常分享和学习源码，不得用于违法犯罪活动，违者必究！
- * Copyright (c) 2020 十三 all rights reserved.
- * 版权所有，侵权必究！
- */
+
 package jl.mall.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import jl.mall.common.*;
 import jl.mall.dao.*;
 import jl.mall.entity.*;
+import jl.mall.param.MallOrderSearchParam;
 import jl.mall.service.MallOrderService;
 import jl.mall.util.BeanUtil;
 import jl.mall.util.NumberUtil;
 import jl.mall.util.PageQueryUtil;
 import jl.mall.util.PageResult;
 import jl.mall.vo.MallOrderDetailVO;
-import jl.mall.vo.NewBeeMallOrderItemVO;
-import jl.mall.vo.NewBeeMallOrderListVO;
+import jl.mall.vo.MallOrderItemVO;
+import jl.mall.vo.MallOrderListVO;
 import jl.mall.vo.MallShoppingCartItemVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +45,9 @@ public class MallOrderServiceImpl implements MallOrderService {
     private MallOrderAddressMapper mallOrderAddressMapper;
 
     @Override
-    public PageResult getNewBeeMallOrdersPage(PageQueryUtil pageUtil) {
-        List<MallOrder> mallOrders = mallOrderMapper.findNewBeeMallOrderList(pageUtil);
-        int total = mallOrderMapper.getTotalNewBeeMallOrders(pageUtil);
+    public PageResult getMallOrdersPage(MallOrderSearchParam pageUtil) {
+        List<MallOrder> mallOrders = mallOrderMapper.findMallOrderList(pageUtil);
+        int total = mallOrderMapper.getTotalMallOrders(pageUtil);
         PageResult pageResult = new PageResult(mallOrders, total, pageUtil.getLimit(), pageUtil.getPage());
         return pageResult;
     }
@@ -78,7 +72,7 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Transactional
     public String checkDone(Long[] ids) {
         //查询所有的订单 判断状态 修改状态和更新时间
-        List<MallOrder> orders = mallOrderMapper.selectByPrimaryKeys(Arrays.asList(ids));
+        List<MallOrder> orders = mallOrderMapper.selectListByKeys(Arrays.asList(ids));
         String errorOrderNos = "";
         if (!CollectionUtils.isEmpty(orders)) {
             for (MallOrder mallOrder : orders) {
@@ -114,7 +108,7 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Transactional
     public String checkOut(Long[] ids) {
         //查询所有的订单 判断状态 修改状态和更新时间
-        List<MallOrder> orders = mallOrderMapper.selectByPrimaryKeys(Arrays.asList(ids));
+        List<MallOrder> orders = mallOrderMapper.selectListByKeys(Arrays.asList(ids));
         String errorOrderNos = "";
         if (!CollectionUtils.isEmpty(orders)) {
             for (MallOrder mallOrder : orders) {
@@ -150,7 +144,7 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Transactional
     public String closeOrder(Long[] ids) {
         //查询所有的订单 判断状态 修改状态和更新时间
-        List<MallOrder> orders = mallOrderMapper.selectByPrimaryKeys(Arrays.asList(ids));
+        List<MallOrder> orders = mallOrderMapper.selectListByKeys(Arrays.asList(ids));
         String errorOrderNos = "";
         if (!CollectionUtils.isEmpty(orders)) {
             for (MallOrder mallOrder : orders) {
@@ -202,24 +196,24 @@ public class MallOrderServiceImpl implements MallOrderService {
     public String saveOrder(MallUser loginMallUser, MallUserAddress address, List<MallShoppingCartItemVO> myShoppingCartItems) {
         List<Long> itemIdList = myShoppingCartItems.stream().map(MallShoppingCartItemVO::getCartItemId).collect(Collectors.toList());
         List<Long> goodsIds = myShoppingCartItems.stream().map(MallShoppingCartItemVO::getGoodsId).collect(Collectors.toList());
-        List<MallGoods> mallGoods = mallGoodsMapper.selectByPrimaryKeys(goodsIds);
+        List<MallGoods> mallGoods = mallGoodsMapper.selecListByKeys(goodsIds);
         //检查是否包含已下架商品
         List<MallGoods> goodsListNotSelling = mallGoods.stream()
-                .filter(newBeeMallGoodsTemp -> newBeeMallGoodsTemp.getGoodsSellStatus() != Constants.SELL_STATUS_UP)
+                .filter(MallGoodsTemp -> MallGoodsTemp.getGoodsSellStatus() != Constants.SELL_STATUS_UP)
                 .collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(goodsListNotSelling)) {
             //goodsListNotSelling 对象非空则表示有下架商品
             MallException.fail(goodsListNotSelling.get(0).getGoodsName() + "已下架，无法生成订单");
         }
-        Map<Long, MallGoods> newBeeMallGoodsMap = mallGoods.stream().collect(Collectors.toMap(MallGoods::getGoodsId, Function.identity(), (entity1, entity2) -> entity1));
+        Map<Long, MallGoods> MallGoodsMap = mallGoods.stream().collect(Collectors.toMap(MallGoods::getGoodsId, Function.identity(), (entity1, entity2) -> entity1));
         //判断商品库存
         for (MallShoppingCartItemVO shoppingCartItemVO : myShoppingCartItems) {
             //查出的商品中不存在购物车中的这条关联商品数据，直接返回错误提醒
-            if (!newBeeMallGoodsMap.containsKey(shoppingCartItemVO.getGoodsId())) {
+            if (!MallGoodsMap.containsKey(shoppingCartItemVO.getGoodsId())) {
                 MallException.fail(ServiceResultEnum.SHOPPING_ITEM_ERROR.getResult());
             }
             //存在数量大于库存的情况，直接返回错误提醒
-            if (shoppingCartItemVO.getGoodsCount() > newBeeMallGoodsMap.get(shoppingCartItemVO.getGoodsId()).getStockNum()) {
+            if (shoppingCartItemVO.getGoodsCount() > MallGoodsMap.get(shoppingCartItemVO.getGoodsId()).getStockNum()) {
                 MallException.fail(ServiceResultEnum.SHOPPING_ITEM_COUNT_ERROR.getResult());
             }
         }
@@ -227,6 +221,8 @@ public class MallOrderServiceImpl implements MallOrderService {
         if (!CollectionUtils.isEmpty(itemIdList) && !CollectionUtils.isEmpty(goodsIds) && !CollectionUtils.isEmpty(mallGoods)) {
             if (mallShoppingCartItemMapper.deleteBatch(itemIdList) > 0) {
                 List<StockNumDTO> stockNumDTOS = BeanUtil.copyList(myShoppingCartItems, StockNumDTO.class);
+
+                log.info("stockNumDTOS:{}", JSON.toJSONString(stockNumDTOS));
                 int updateStockNumResult = mallGoodsMapper.updateStockNum(stockNumDTOS);
                 if (updateStockNumResult < 1) {
                     MallException.fail(ServiceResultEnum.SHOPPING_ITEM_COUNT_ERROR.getResult());
@@ -250,6 +246,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                 mallOrder.setExtraInfo(extraInfo);
                 mallOrder.setPayStatus(((byte) PayStatusEnum.PAY_ING.getPayStatus()));
                 mallOrder.setOrderStatus((byte)MallOrderStatusEnum.ORDER_PRE_PAY.getOrderStatus());
+                mallOrder.setCreateTime(new Date());
                 //生成订单项并保存订单项纪录
                 log.info("mallOrder:{}", JSON.toJSONString(mallOrder));
                 if (mallOrderMapper.insertSelective(mallOrder) > 0) {
@@ -261,9 +258,9 @@ public class MallOrderServiceImpl implements MallOrderService {
                     List<MallOrderItem> mallOrderItems = new ArrayList<>();
                     for (MallShoppingCartItemVO mallShoppingCartItemVO : myShoppingCartItems) {
                         MallOrderItem mallOrderItem = new MallOrderItem();
-                        //使用BeanUtil工具类将newBeeMallShoppingCartItemVO中的属性复制到newBeeMallOrderItem对象中
+                        //使用BeanUtil工具类将MallShoppingCartItemVO中的属性复制到MallOrderItem对象中
                         BeanUtil.copyProperties(mallShoppingCartItemVO, mallOrderItem);
-                        //NewBeeMallOrderMapper文件insert()方法中使用了useGeneratedKeys因此orderId可以获取到
+                        //MallOrderMapper文件insert()方法中使用了useGeneratedKeys因此orderId可以获取到
                         mallOrderItem.setOrderId(mallOrder.getOrderId());
                         mallOrderItems.add(mallOrderItem);
                     }
@@ -295,13 +292,15 @@ public class MallOrderServiceImpl implements MallOrderService {
         List<MallOrderItem> orderItems = mallOrderItemMapper.selectByOrderId(mallOrder.getOrderId());
         //获取订单项数据
         if (!CollectionUtils.isEmpty(orderItems)) {
-            List<NewBeeMallOrderItemVO> newBeeMallOrderItemVOS = BeanUtil.copyList(orderItems, NewBeeMallOrderItemVO.class);
+            List<MallOrderItemVO> MallOrderItemVOS = BeanUtil.copyList(orderItems, MallOrderItemVO.class);
             MallOrderDetailVO mallOrderDetailVO = new MallOrderDetailVO();
             BeanUtil.copyProperties(mallOrder, mallOrderDetailVO);
-            log.info("newBeeMallOrderDetailVO:{}",JSON.toJSONString(mallOrderDetailVO));
-            mallOrderDetailVO.setOrderStatusString(MallOrderStatusEnum.getNewBeeMallOrderStatusEnumByStatus(mallOrderDetailVO.getOrderStatus()).getName());
-            mallOrderDetailVO.setPayTypeString(PayTypeEnum.getPayTypeEnumByType(mallOrderDetailVO.getPayType()).getName());
-            mallOrderDetailVO.setNewBeeMallOrderItemVOS(newBeeMallOrderItemVOS);
+            log.info("MallOrderDetailVO:{}",JSON.toJSONString(mallOrderDetailVO));
+            mallOrderDetailVO.setOrderStatusString(MallOrderStatusEnum.getMallOrderStatusEnumByStatus(mallOrderDetailVO.getOrderStatus()).getName());
+            if(mallOrderDetailVO.getPayType() != null) {
+                mallOrderDetailVO.setPayTypeString(PayTypeEnum.getPayTypeEnumByType(mallOrderDetailVO.getPayType()).getName());
+            }
+            mallOrderDetailVO.setMallOrderItemVOS(MallOrderItemVOS);
             return mallOrderDetailVO;
         } else {
             MallException.fail(ServiceResultEnum.ORDER_ITEM_NULL_ERROR.getResult());
@@ -313,27 +312,27 @@ public class MallOrderServiceImpl implements MallOrderService {
 
     @Override
     public PageResult getMyOrders(PageQueryUtil pageUtil) {
-        int total = mallOrderMapper.getTotalNewBeeMallOrders(pageUtil);
-        List<MallOrder> mallOrders = mallOrderMapper.findNewBeeMallOrderList(pageUtil);
-        List<NewBeeMallOrderListVO> orderListVOS = new ArrayList<>();
+        int total = mallOrderMapper.getTotalMallOrders(pageUtil);
+        List<MallOrder> mallOrders = mallOrderMapper.findMallOrderList(pageUtil);
+        List<MallOrderListVO> orderListVOS = new ArrayList<>();
         if (total > 0) {
             //数据转换 将实体类转成vo
-            orderListVOS = BeanUtil.copyList(mallOrders, NewBeeMallOrderListVO.class);
+            orderListVOS = BeanUtil.copyList(mallOrders, MallOrderListVO.class);
             //设置订单状态中文显示值
-            for (NewBeeMallOrderListVO newBeeMallOrderListVO : orderListVOS) {
-                newBeeMallOrderListVO.setOrderStatusString(MallOrderStatusEnum.getNewBeeMallOrderStatusEnumByStatus(newBeeMallOrderListVO.getOrderStatus()).getName());
+            for (MallOrderListVO MallOrderListVO : orderListVOS) {
+                MallOrderListVO.setOrderStatusString(MallOrderStatusEnum.getMallOrderStatusEnumByStatus(MallOrderListVO.getOrderStatus()).getName());
             }
             List<Long> orderIds = mallOrders.stream().map(MallOrder::getOrderId).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(orderIds)) {
                 List<MallOrderItem> orderItems = mallOrderItemMapper.selectByOrderIds(orderIds);
                 Map<Long, List<MallOrderItem>> itemByOrderIdMap = orderItems.stream().collect(groupingBy(MallOrderItem::getOrderId));
-                for (NewBeeMallOrderListVO newBeeMallOrderListVO : orderListVOS) {
+                for (MallOrderListVO MallOrderListVO : orderListVOS) {
                     //封装每个订单列表对象的订单项数据
-                    if (itemByOrderIdMap.containsKey(newBeeMallOrderListVO.getOrderId())) {
-                        List<MallOrderItem> orderItemListTemp = itemByOrderIdMap.get(newBeeMallOrderListVO.getOrderId());
-                        //将NewBeeMallOrderItem对象列表转换成NewBeeMallOrderItemVO对象列表
-                        List<NewBeeMallOrderItemVO> newBeeMallOrderItemVOS = BeanUtil.copyList(orderItemListTemp, NewBeeMallOrderItemVO.class);
-                        newBeeMallOrderListVO.setNewBeeMallOrderItemVOS(newBeeMallOrderItemVOS);
+                    if (itemByOrderIdMap.containsKey(MallOrderListVO.getOrderId())) {
+                        List<MallOrderItem> orderItemListTemp = itemByOrderIdMap.get(MallOrderListVO.getOrderId());
+                        //将MallOrderItem对象列表转换成MallOrderItemVO对象列表
+                        List<MallOrderItemVO> MallOrderItemVOS = BeanUtil.copyList(orderItemListTemp, MallOrderItemVO.class);
+                        MallOrderListVO.setMallOrderItemVOS(MallOrderItemVOS);
                     }
                 }
             }

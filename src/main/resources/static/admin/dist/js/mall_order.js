@@ -1,3 +1,6 @@
+var orderNo = $('#orderNo').val();
+var payType = $('#payType').val();
+var orderStatus = $('#orderStatus').val();
 $(function () {
     $("#jqGrid").jqGrid({
         url: '/admin/orders/list',
@@ -32,6 +35,7 @@ $(function () {
             rows: "limit",
             order: "order",
         },
+        postData:{"orderNo":orderNo,"payType":payType,"orderStatus":orderStatus},
         gridComplete: function () {
             //隐藏grid底部滚动条
             $("#jqGrid").closest(".ui-jqgrid-bdiv").css({"overflow-x": "hidden"});
@@ -101,6 +105,17 @@ function reload() {
     var page = $("#jqGrid").jqGrid('getGridParam', 'page');
     $("#jqGrid").jqGrid('setGridParam', {
         page: page
+    }).trigger("reloadGrid");
+}
+
+function searchOrderList() {
+     orderNo = $('#orderNo').val();
+     payType = $('#payType').val();
+     orderStatus = $('#orderStatus').val();
+    var page = $("#jqGrid").jqGrid('getGridParam', 'page');
+    $("#jqGrid").jqGrid('setGridParam', {
+        postData:{"orderNo":orderNo,"payType":payType,"orderStatus":orderStatus},
+        page: page,
     }).trigger("reloadGrid");
 }
 
