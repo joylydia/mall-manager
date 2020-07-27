@@ -29,7 +29,7 @@ import java.util.Map;
 
 @RestController
 @Api(value = "v1", tags = "5.商城购物车相关接口")
-//@RequestMapping("/")
+@RequestMapping("/api")
 public class MallShoppingCartAPI {
 
     @Resource

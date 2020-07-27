@@ -1,3 +1,6 @@
+var goodsName = $('#goodsName').val();
+var goodsId = $('#goodsId').val();
+var goodsSellStatus = $('#goodsSellStatus').val();
 $(function () {
     $("#jqGrid").jqGrid({
         url: '/admin/goods/list',
@@ -39,6 +42,7 @@ $(function () {
             rows: "limit",
             order: "order",
         },
+        postData:{"goodsName":goodsName,"goodsId":goodsId,"goodsSellStatus":goodsSellStatus},
         gridComplete: function () {
             //隐藏grid底部滚动条
             $("#jqGrid").closest(".ui-jqgrid-bdiv").css({"overflow-x": "hidden"});
@@ -95,49 +99,23 @@ function editGoods() {
 }
 
 /**
- * 上架
+ *查询商品列表
  */
-function putUpGoods() {
-    var ids = getSelectedRows();
-    if (ids == null) {
-        return;
-    }
-    swal({
-        title: "确认弹框",
-        text: "确认要执行上架操作吗?",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-    }).then((flag) => {
-            if (flag) {
-                $.ajax({
-                    type: "PUT",
-                    url: "/admin/goods/status/0",
-                    contentType: "application/json",
-                    data: JSON.stringify(ids),
-                    success: function (r) {
-                        if (r.resultCode == 200) {
-                            swal("上架成功", {
-                                icon: "success",
-                            });
-                            $("#jqGrid").trigger("reloadGrid");
-                        } else {
-                            swal(r.message, {
-                                icon: "error",
-                            });
-                        }
-                    }
-                });
-            }
-        }
-    )
-    ;
+function searchGoodsList() {
+     goodsName = $('#goodsName').val();
+     goodsId = $('#goodsId').val();
+     goodsSellStatus = $('#goodsSellStatus').val();
+    var page = $("#jqGrid").jqGrid('getGridParam', 'page');
+    $("#jqGrid").jqGrid('setGridParam', {
+        postData:{"goodsName":goodsName,"goodsId":goodsId,"goodsSellStatus":goodsSellStatus},
+        page: page,
+    }).trigger("reloadGrid");
 }
 
 /**
- * 下架
+ * 修改商品状态
  */
-function putDownGoods() {
+function changeGoodsStatus(status) {
     var ids = getSelectedRows();
     if (ids == null) {
         return;
@@ -152,12 +130,12 @@ function putDownGoods() {
             if (flag) {
                 $.ajax({
                     type: "PUT",
-                    url: "/admin/goods/status/1",
+                    url: "/admin/goods/status/" + status,
                     contentType: "application/json",
                     data: JSON.stringify(ids),
                     success: function (r) {
                         if (r.resultCode == 200) {
-                            swal("下架成功", {
+                            swal("操作成功", {
                                 icon: "success",
                             });
                             $("#jqGrid").trigger("reloadGrid");

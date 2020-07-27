@@ -100,6 +100,50 @@
             </div>
             <!-- /.modal -->
         </div>
+        <div class="content">
+            <!-- 模态框（Modal） -->
+            <div class="modal fade" id="categorIconyModal" tabindex="-1" role="dialog" aria-labelledby="goodsModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h6 class="modal-title" id="categoryModalLabel">信息完善</h6>
+                        </div>
+                        <div class="modal-body">
+                            <form onsubmit="return false;">
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <th:block th:if="${null == categoryIcon}">
+                                            <img id="categoryIcon" src="/admin/dist/img/img-upload.png"
+                                                 style="height: 64px;width: 64px;">
+                                        </th:block>
+                                        <th:block th:unless="${null == categoryIcon}">
+                                            <img id="categoryIcon" th:src="${categoryIcon}"
+                                                 style="width:160px ;height: 160px;display:block;">
+                                        </th:block>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <div class="col-sm-4">
+                                        <button class="btn btn-info" style="margin-bottom: 5px;"
+                                                id="uploadGoodsCoverImg">
+                                            <i class="fa fa-picture-o"></i>&nbsp;上传商品类型图标
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="saveCategoryButton">确认1</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal -->
+        </div>
     </div>
     <!-- /.content-wrapper -->
     <!-- 引入页脚footer-fragment -->
@@ -121,5 +165,9 @@
 <script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
 <script th:src="@{/admin/dist/js/public.js}"></script>
 <script th:src="@{/admin/dist/js/mall_category.js}"></script>
+<script th:src="@{/admin/dist/js/mall_category_edit.js}"></script>
+<script th:src="@{/admin/plugins/kindeditor-4.1.10/kindeditor-all.js}"></script>
+<script th:src="@{/admin/plugins/kindeditor-4.1.10/lang/zh_CN.js}"></script>
+<script th:src="@{/admin/plugins/ajaxupload/ajaxupload.js}"></script>
 </body>
 </html>

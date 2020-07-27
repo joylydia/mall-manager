@@ -51,13 +51,37 @@
                             <button class="btn btn-info" onclick="editGoods()"><i
                                     class="fa fa-pencil-square-o"></i>&nbsp;修改商品
                             </button>
-                            <button class="btn btn-success" onclick="putUpGoods()"><i
+                            <button class="btn btn-success" onclick="changeGoodsStatus(0)"><i
                                     class="fa fa-arrow-up"></i>&nbsp;上架商品
                             </button>
-                            <button class="btn btn-danger" onclick="putDownGoods()"><i
+                            <button class="btn btn-warning" onclick="changeGoodsStatus(1)"><i
                                     class="fa fa-arrow-down"></i>&nbsp;下架商品
                             </button>
+                            <button class="btn btn-danger" onclick="changeGoodsStatus(2)"><i
+                                    class="fa fa-arrow-down"></i>&nbsp;删除商品
+                            </button>
                         </div>
+
+                        <div class="form-group" style="display:flex;">
+
+<!--                            <input type="text" class="form-control col-sm-3" id="goodsName"-->
+<!--                                   name="goodsName" placeholder="商品名称" >&nbsp;&nbsp;&nbsp;&nbsp;-->
+                            <input type="text" class="form-control col-sm-3" id="goodsId"
+                                   name="goodsId" placeholder="商品编号" >&nbsp;&nbsp;&nbsp;&nbsp;
+
+                            <label class="control-label">&nbsp;&nbsp;商品状态&nbsp;&nbsp;</label>
+                            <select class="form-control col-sm-2" id="goodsSellStatus" data-placeholder="请选择商品状态">
+                                <option value="" text="待支付">--全部--</option>
+                                <option value="0" text="已上架">已上架</option>
+                                <option value="1" text="已下架">已下架</option>
+                                <option value="2" text="已删除">已删除</option>
+                            </select>&nbsp;&nbsp;&nbsp;&nbsp;
+
+                            <button class="btn btn-primary" onclick="searchGoodsList()"><i
+                                    class="fa fa-search"></i>&nbsp;查询
+                            </button>
+                        </div>
+
                         <table id="jqGrid" class="table table-bordered">
                         </table>
                         <div id="jqGridPager"></div>

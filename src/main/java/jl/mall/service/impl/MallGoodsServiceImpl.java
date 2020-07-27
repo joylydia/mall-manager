@@ -1,9 +1,11 @@
 
 package jl.mall.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import jl.mall.common.ServiceResultEnum;
 import jl.mall.dao.MallGoodsMapper;
 import jl.mall.entity.MallGoods;
+import jl.mall.param.MallGoodsSearchParam;
 import jl.mall.service.MallGoodsService;
 import jl.mall.util.BeanUtil;
 import jl.mall.util.PageQueryUtil;
@@ -26,7 +28,8 @@ public class MallGoodsServiceImpl implements MallGoodsService {
     private MallGoodsMapper goodsMapper;
 
     @Override
-    public PageResult getMallGoodsPage(PageQueryUtil pageUtil) {
+    public PageResult getMallGoodsPage(MallGoodsSearchParam pageUtil) {
+        log.info("params:{}",JSON.toJSONString(pageUtil));
         List<MallGoods> goodsList = goodsMapper.findMallGoodsList(pageUtil);
         int total = goodsMapper.getTotalMallGoods(pageUtil);
         PageResult pageResult = new PageResult(goodsList, total, pageUtil.getLimit(), pageUtil.getPage());
@@ -57,6 +60,7 @@ public class MallGoodsServiceImpl implements MallGoodsService {
             return ServiceResultEnum.DATA_NOT_EXIST.getResult();
         }
         goods.setUpdateTime(new Date());
+        log.info(JSON.toJSONString(goods));
         if (goodsMapper.updateByPrimaryKeySelective(goods) > 0) {
             return ServiceResultEnum.SUCCESS.getResult();
         }

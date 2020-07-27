@@ -23,7 +23,7 @@ import java.util.List;
 
 @RestController
 @Api(value = "v1", tags = "6.商城个人地址相关接口")
-//@RequestMapping("/api/v1")
+@RequestMapping("/api")
 @Slf4j
 public class MallUserAddressAPI {
 

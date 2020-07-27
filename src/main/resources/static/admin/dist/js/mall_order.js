@@ -80,13 +80,19 @@ $(function () {
 
     function payTypeFormatter(cellvalue) {
         //支付类型:0.无 1.支付宝支付 2.微信支付
-        if (cellvalue == 0) {
-            return "无";
+        if (cellvalue == 0 || cellvalue == null) {
+            return "未";
         }
         if (cellvalue == 1) {
-            return "支付宝支付";
+            return "支付宝转账";
         }
         if (cellvalue == 2) {
+            return "信转账";
+        }
+        if (cellvalue == 3) {
+            return "支付宝支付";
+        }
+        if (cellvalue == 4) {
             return "微信支付";
         }
     }

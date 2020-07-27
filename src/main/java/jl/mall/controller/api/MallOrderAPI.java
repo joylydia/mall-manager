@@ -33,7 +33,7 @@ import java.util.Map;
 
 @RestController
 @Api(value = "v1", tags = "7.商城订单操作相关接口")
-//@RequestMapping("/api/v1")
+@RequestMapping("/api")
 public class MallOrderAPI {
 
     @Resource

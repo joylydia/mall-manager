@@ -2,6 +2,7 @@
 package jl.mall.service;
 
 import jl.mall.entity.MallGoods;
+import jl.mall.param.MallGoodsSearchParam;
 import jl.mall.util.PageQueryUtil;
 import jl.mall.util.PageResult;
 
@@ -14,7 +15,7 @@ public interface MallGoodsService {
      * @param pageUtil
      * @return
      */
-    PageResult getMallGoodsPage(PageQueryUtil pageUtil);
+    PageResult getMallGoodsPage(MallGoodsSearchParam pageUtil);
 
     /**
      * 添加商品

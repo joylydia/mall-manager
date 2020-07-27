@@ -44,10 +44,13 @@ public class MallGoods extends BaseEntity{
     @Column(name="tag",nullable = false)
     private String tag;
 
+    /**
+     * 状态： 0：上架   1： 下架   2：删除
+     */
     @Column(name="goods_sell_status",nullable = false)
     private Byte goodsSellStatus;
 
-    @Transient
+    @Column(name="goods_detail_content",nullable = false)
     private String goodsDetailContent;
 
 }

@@ -12,6 +12,7 @@ import jl.mall.config.annotion.TokenToMallUser;
 import jl.mall.entity.GoodsCategory;
 import jl.mall.entity.MallGoods;
 import jl.mall.entity.MallUser;
+import jl.mall.param.MallGoodsSearchParam;
 import jl.mall.service.MallCategoryService;
 import jl.mall.service.MallGoodsService;
 import jl.mall.util.*;
@@ -135,7 +136,7 @@ public class MallGoodsController {
         if (StringUtils.isEmpty(params.get("page")) || StringUtils.isEmpty(params.get("limit"))) {
             return ResultGenerator.genFailResult("参数异常！");
         }
-        PageQueryUtil pageUtil = new PageQueryUtil(params);
+        MallGoodsSearchParam pageUtil = new MallGoodsSearchParam(params);
         return ResultGenerator.genSuccessResult(mallGoodsService.getMallGoodsPage(pageUtil));
     }
 
@@ -215,7 +216,8 @@ public class MallGoodsController {
         if (ids.length < 1) {
             return ResultGenerator.genFailResult("参数异常！");
         }
-        if (sellStatus != Constants.SELL_STATUS_UP && sellStatus != Constants.SELL_STATUS_DOWN) {
+        if (sellStatus != Constants.SELL_STATUS_UP && sellStatus != Constants.SELL_STATUS_DOWN
+                && sellStatus != Constants.SELL_STATUS_DELETE) {
             return ResultGenerator.genFailResult("状态异常！");
         }
         if (mallGoodsService.batchUpdateSellStatus(ids, sellStatus)) {

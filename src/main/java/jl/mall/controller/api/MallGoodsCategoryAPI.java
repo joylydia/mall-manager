@@ -11,6 +11,7 @@ import jl.mall.util.ResultGenerator;
 import jl.mall.vo.MallIndexCategoryVO;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -18,7 +19,7 @@ import java.util.List;
 
 @RestController
 @Api(value = "v1", tags = "3.商城分类页面接口")
-//@RequestMapping("/api/v1")
+@RequestMapping("/api")
 public class MallGoodsCategoryAPI {
 
     @Resource

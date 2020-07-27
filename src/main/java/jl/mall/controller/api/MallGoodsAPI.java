@@ -16,10 +16,7 @@ import jl.mall.vo.MallGoodsDetailVO;
 import jl.mall.vo.MallSearchGoodsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -28,7 +25,7 @@ import java.util.Map;
 
 @RestController
 @Api(value = "v1", tags = "4.商城商品相关接口")
-//@RequestMapping("/")
+@RequestMapping("/api")
 @Slf4j
 public class MallGoodsAPI {
 

@@ -36,5 +36,7 @@ public class GoodsCategory extends BaseEntity{
     @Column(name="status")
     private Byte status = 0;
 
+    @Column(name="category_icon")
+    private String categoryIcon;
 
 }

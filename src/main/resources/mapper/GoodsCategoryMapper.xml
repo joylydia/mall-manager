@@ -6,6 +6,7 @@
         <result column="category_level" jdbcType="TINYINT" property="categoryLevel"/>
         <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
         <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="category_icon" jdbcType="VARCHAR" property="categoryIcon"/>
         <result column="category_rank" jdbcType="INTEGER" property="categoryRank"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -15,7 +16,7 @@
     </resultMap>
     <sql id="Base_Column_List">
     category_id, category_level, parent_id, category_name, category_rank, status,
-    create_time, create_user, update_time, update_user
+    create_time, create_user, update_time, update_user, category_icon
   </sql>
     <select id="findGoodsCategoryList" parameterType="Map" resultMap="BaseResultMap">
         select
@@ -47,12 +48,7 @@
             and status = 0
         </where>
     </select>
-<!--    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">-->
-<!--        select-->
-<!--        <include refid="Base_Column_List"/>-->
-<!--        from jl_mall_goods_category-->
-<!--        where category_id = #{categoryId,jdbcType=BIGINT} and status=0-->
-<!--    </select>-->
+
     <select id="selectByLevelAndName" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -75,10 +71,7 @@
             limit #{number}
         </if>
     </select>
-<!--    <update id="deleteByPrimaryKey" parameterType="java.lang.Long">-->
-<!--    update jl_mall_goods_category set status=1-->
-<!--    where category_id = #{categoryId,jdbcType=BIGINT} and status=0-->
-<!--  </update>-->
+
     <update id="deleteBatch">
         update jl_mall_goods_category
         set status=1 where category_id in
@@ -86,127 +79,4 @@
             #{id}
         </foreach>
     </update>
-<!--    <insert id="insert" parameterType="jl.mall.entity.GoodsCategory">-->
-<!--    insert into jl_mall_goods_category (category_id, category_level, parent_id,-->
-<!--      category_name, category_rank, status,-->
-<!--      create_time, create_user, update_time, -->
-<!--      update_user)-->
-<!--    values (#{categoryId,jdbcType=BIGINT}, #{categoryLevel,jdbcType=TINYINT}, #{parentId,jdbcType=BIGINT}, -->
-<!--      #{categoryName,jdbcType=VARCHAR}, #{categoryRank,jdbcType=INTEGER}, #{status,jdbcType=TINYINT},-->
-<!--      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, -->
-<!--      #{updateUser,jdbcType=INTEGER})-->
-<!--  </insert>-->
-<!--    <insert id="insertSelective" parameterType="jl.mall.entity.GoodsCategory">-->
-<!--        insert into jl_mall_goods_category-->
-<!--        <trim prefix="(" suffix=")" suffixOverrides=",">-->
-<!--            <if test="categoryId != null">-->
-<!--                category_id,-->
-<!--            </if>-->
-<!--            <if test="categoryLevel != null">-->
-<!--                category_level,-->
-<!--            </if>-->
-<!--            <if test="parentId != null">-->
-<!--                parent_id,-->
-<!--            </if>-->
-<!--            <if test="categoryName != null">-->
-<!--                category_name,-->
-<!--            </if>-->
-<!--            <if test="categoryRank != null">-->
-<!--                category_rank,-->
-<!--            </if>-->
-<!--            <if test="status != null">-->
-<!--                status,-->
-<!--            </if>-->
-<!--            <if test="createTime != null">-->
-<!--                create_time,-->
-<!--            </if>-->
-<!--            <if test="createUser != null">-->
-<!--                create_user,-->
-<!--            </if>-->
-<!--            <if test="updateTime != null">-->
-<!--                update_time,-->
-<!--            </if>-->
-<!--            <if test="updateUser != null">-->
-<!--                update_user,-->
-<!--            </if>-->
-<!--        </trim>-->
-<!--        <trim prefix="values (" suffix=")" suffixOverrides=",">-->
-<!--            <if test="categoryId != null">-->
-<!--                #{categoryId,jdbcType=BIGINT},-->
-<!--            </if>-->
-<!--            <if test="categoryLevel != null">-->
-<!--                #{categoryLevel,jdbcType=TINYINT},-->
-<!--            </if>-->
-<!--            <if test="parentId != null">-->
-<!--                #{parentId,jdbcType=BIGINT},-->
-<!--            </if>-->
-<!--            <if test="categoryName != null">-->
-<!--                #{categoryName,jdbcType=VARCHAR},-->
-<!--            </if>-->
-<!--            <if test="categoryRank != null">-->
-<!--                #{categoryRank,jdbcType=INTEGER},-->
-<!--            </if>-->
-<!--            <if test="status != null">-->
-<!--                #{status,jdbcType=TINYINT},-->
-<!--            </if>-->
-<!--            <if test="createTime != null">-->
-<!--                #{createTime,jdbcType=TIMESTAMP},-->
-<!--            </if>-->
-<!--            <if test="createUser != null">-->
-<!--                #{createUser,jdbcType=INTEGER},-->
-<!--            </if>-->
-<!--            <if test="updateTime != null">-->
-<!--                #{updateTime,jdbcType=TIMESTAMP},-->
-<!--            </if>-->
-<!--            <if test="updateUser != null">-->
-<!--                #{updateUser,jdbcType=INTEGER},-->
-<!--            </if>-->
-<!--        </trim>-->
-<!--    </insert>-->
-<!--    <update id="updateByPrimaryKeySelective" parameterType="jl.mall.entity.GoodsCategory">-->
-<!--        update jl_mall_goods_category-->
-<!--        <set>-->
-<!--            <if test="categoryLevel != null">-->
-<!--                category_level = #{categoryLevel,jdbcType=TINYINT},-->
-<!--            </if>-->
-<!--            <if test="parentId != null">-->
-<!--                parent_id = #{parentId,jdbcType=BIGINT},-->
-<!--            </if>-->
-<!--            <if test="categoryName != null">-->
-<!--                category_name = #{categoryName,jdbcType=VARCHAR},-->
-<!--            </if>-->
-<!--            <if test="categoryRank != null">-->
-<!--                category_rank = #{categoryRank,jdbcType=INTEGER},-->
-<!--            </if>-->
-<!--            <if test="status != null">-->
-<!--                status = #{status,jdbcType=TINYINT},-->
-<!--            </if>-->
-<!--            <if test="createTime != null">-->
-<!--                create_time = #{createTime,jdbcType=TIMESTAMP},-->
-<!--            </if>-->
-<!--            <if test="createUser != null">-->
-<!--                create_user = #{createUser,jdbcType=INTEGER},-->
-<!--            </if>-->
-<!--            <if test="updateTime != null">-->
-<!--                update_time = #{updateTime,jdbcType=TIMESTAMP},-->
-<!--            </if>-->
-<!--            <if test="updateUser != null">-->
-<!--                update_user = #{updateUser,jdbcType=INTEGER},-->
-<!--            </if>-->
-<!--        </set>-->
-<!--        where category_id = #{categoryId,jdbcType=BIGINT}-->
-<!--    </update>-->
-<!--    <update id="updateByPrimaryKey" parameterType="jl.mall.entity.GoodsCategory">-->
-<!--    update jl_mall_goods_category-->
-<!--    set category_level = #{categoryLevel,jdbcType=TINYINT},-->
-<!--      parent_id = #{parentId,jdbcType=BIGINT},-->
-<!--      category_name = #{categoryName,jdbcType=VARCHAR},-->
-<!--      category_rank = #{categoryRank,jdbcType=INTEGER},-->
-<!--      status = #{status,jdbcType=TINYINT},-->
-<!--      create_time = #{createTime,jdbcType=TIMESTAMP},-->
-<!--      create_user = #{createUser,jdbcType=INTEGER},-->
-<!--      update_time = #{updateTime,jdbcType=TIMESTAMP},-->
-<!--      update_user = #{updateUser,jdbcType=INTEGER}-->
-<!--    where category_id = #{categoryId,jdbcType=BIGINT}-->
-<!--  </update>-->
 </mapper>

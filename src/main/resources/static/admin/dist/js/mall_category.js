@@ -42,6 +42,45 @@ $(function () {
     $(window).resize(function () {
         $("#jqGrid").setGridWidth($(".card-body").width());
     });
+
+
+
+
+    //详情编辑器
+     var   editor = KindEditor.create('textarea[id="editor"]', {
+            items: ['source', '|', 'undo', 'redo', '|', 'preview', 'print', 'template', 'code', 'cut', 'copy', 'paste',
+                'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
+                'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+                'superscript', 'clearhtml', 'quickformat', 'selectall', '|', 'fullscreen', '/',
+                'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+                'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'multiimage',
+                'table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
+                'anchor', 'link', 'unlink'],
+            uploadJson: '/admin/upload/file',
+            filePostName: 'file'
+        });
+
+        new AjaxUpload('#uploadGoodsCoverImg', {
+            action: '/admin/upload/file',
+            name: 'file',
+            autoSubmit: true,
+            responseType: "json",
+            onSubmit: function (file, extension) {
+                if (!(extension && /^(jpg|jpeg|png|gif)$/.test(extension.toLowerCase()))) {
+                    alert('只支持jpg、png、gif格式的文件！');
+                    return false;
+                }
+            },
+            onComplete: function (file, r) {
+                if (r != null && r.resultCode == 200) {
+                    $("#categoryIcon").attr("src", r.data);
+                    $("#categoryIcon").attr("style", "width: 128px;height: 128px;display:block;");
+                    return false;
+                } else {
+                    alert("error");
+                }
+            }
+        });
 });
 
 /**
@@ -105,7 +144,12 @@ $('#saveButton').click(function () {
     if (!validCN_ENString2_18(categoryName)) {
         $('#edit-error-msg').css("display", "block");
         $('#edit-error-msg').html("请输入符合规范的分类名称！");
-    } else {
+    }
+
+    //第三层级添加图标
+    if( categoryLevel == "3") {
+        $('#categorIconyModal').modal('show');
+    }else {
         var data = {
             "categoryName": categoryName,
             "categoryLevel": categoryLevel,
@@ -152,6 +196,64 @@ $('#saveButton').click(function () {
         });
     }
 });
+
+$('#saveCategoryButton').click(function () {
+    var categoryName = $("#categoryName").val();
+    var categoryLevel = $("#categoryLevel").val();
+    var parentId = $("#parentId").val();
+    var categoryRank = $("#categoryRank").val();
+    var categoryIcon = $('#categoryIcon')[0].src;
+     var data = {
+                "categoryName": categoryName,
+                "categoryLevel": categoryLevel,
+                "parentId": parentId,
+                "categoryRank": categoryRank,
+                "categoryIcon": categoryIcon
+            };
+            var url = '/admin/categories/save';
+            var id = getSelectedRowWithoutAlert();
+            if (id != null) {
+                url = '/admin/categories/update';
+                data = {
+                    "categoryId": id,
+                    "categoryName": categoryName,
+                    "categoryLevel": categoryLevel,
+                    "parentId": parentId,
+                    "categoryRank": categoryRank,
+                    "categoryIcon": categoryIcon
+                };
+            }
+            $.ajax({
+                type: 'POST',//方法类型
+                url: url,
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (result) {
+                    if (result.resultCode == 200) {
+                        $('#categoryModal').modal('hide');
+                        $('#categorIconyModal').modal('hide');
+                        swal("保存成功", {
+                            icon: "success",
+                        });
+                        reload();
+                    } else {
+                        $('#categoryModal').modal('hide');
+                        $('#categorIconyModal').modal('hide');
+                        swal(result.message, {
+                            icon: "error",
+                        });
+                    }
+                    ;
+                },
+                error: function () {
+                    swal("操作失败", {
+                        icon: "error",
+                    });
+                }
+            });
+
+});
+
 
 function categoryEdit() {
     reset();

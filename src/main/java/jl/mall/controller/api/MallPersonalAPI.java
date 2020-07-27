@@ -27,7 +27,7 @@ import javax.validation.Valid;
 
 @RestController
 @Api(value = "v1", tags = "2.商城用户操作相关接口")
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class MallPersonalAPI {
 
     @Resource

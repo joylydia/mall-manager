@@ -4,6 +4,7 @@ package jl.mall.dao;
 import jl.mall.common.Mapper;
 import jl.mall.entity.MallGoods;
 import jl.mall.entity.StockNumDTO;
+import jl.mall.param.MallGoodsSearchParam;
 import jl.mall.util.PageQueryUtil;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,9 +14,9 @@ public interface MallGoodsMapper extends Mapper<MallGoods> {
 
     int updateByPrimaryKeyWithBLOBs(MallGoods record);
 
-    List<MallGoods> findMallGoodsList(PageQueryUtil pageUtil);
+    List<MallGoods> findMallGoodsList(MallGoodsSearchParam pageUtil);
 
-    int getTotalMallGoods(PageQueryUtil pageUtil);
+    int getTotalMallGoods(MallGoodsSearchParam pageUtil);
 
     List<MallGoods> selecListByKeys(List<Long> goodsIds);
 

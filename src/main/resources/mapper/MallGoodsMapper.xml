@@ -17,13 +17,14 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_user" jdbcType="INTEGER" property="updateUser"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="goods_detail_content" jdbcType="LONGVARCHAR" property="goodsDetailContent"/>
     </resultMap>
     <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="jl.mall.entity.MallGoods">
         <result column="goods_detail_content" jdbcType="LONGVARCHAR" property="goodsDetailContent"/>
     </resultMap>
     <sql id="Base_Column_List">
     goods_id, goods_name, goods_intro,goods_category_id, goods_cover_img, goods_carousel, original_price,
-    selling_price, stock_num, tag, goods_sell_status, create_user, create_time, update_user, 
+    selling_price, stock_num, tag, goods_sell_status, create_user, create_time, update_user, goods_detail_content,
     update_time
   </sql>
     <sql id="Blob_Column_List">
@@ -59,8 +60,11 @@
         <include refid="Base_Column_List"/>
         from jl_mall_goods_info
         <where>
-            <if test="goodsName!=null and goodsName!=''">
-                and goods_name like CONCAT('%','#{goodsName}','%')
+<!--            <if test="goodsName!=null and goodsName!=''">-->
+<!--                and goods_name like CONCAT('%','#{goodsName}','%')-->
+<!--            </if>-->
+            <if test="goodsId!=null and goodsId!=''">
+                and goods_id = #{goodsId}
             </if>
             <if test="goodsSellStatus!=null and goodsSellStatus!=''">
                 and goods_sell_status = #{goodsSellStatus}
@@ -71,6 +75,7 @@
             <if test="endTime != null and endTime.trim() != ''">
                 and create_time &lt; #{endTime}
             </if>
+            and goods_sell_status != 2
         </where>
         order by goods_id desc
         <if test="start!=null and limit!=null">
