@@ -61,6 +61,12 @@
             <if test="endTime != null and endTime.trim() != ''">
                 and create_time &lt; #{endTime}
             </if>
+            <if test="orderIds != null and orderIds.size() >0">
+                order_id in
+                <foreach item="orderId" collection="orderIds" open="(" separator="," close=")">
+                    #{orderId,jdbcType=BIGINT}
+                </foreach>
+            </if>
         </where>
         order by create_time desc
         <if test="start!=null and limit!=null">

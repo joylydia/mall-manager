@@ -3,6 +3,7 @@ package jl.mall.dao;
 
 import jl.mall.common.Mapper;
 import jl.mall.entity.MallOrderItem;
+import jl.mall.param.MallOrderItemSearchParam;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -16,6 +17,15 @@ public interface MallOrderItemMapper extends Mapper<MallOrderItem> {
      * @return
      */
     List<MallOrderItem> selectByOrderId(Long orderId);
+
+    /**
+     * 获取订单项列表
+     *
+     * @param searchParam
+     * @return
+     */
+    List<MallOrderItem> selectSearch(MallOrderItemSearchParam searchParam);
+
 
     /**
      * 根据订单ids获取订单项列表

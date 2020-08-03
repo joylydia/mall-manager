@@ -39,4 +39,9 @@ public class MallGoodsDetailVO implements Serializable {
 
     @ApiModelProperty("商品详情字段")
     private String goodsDetailContent;
+
+    @ApiModelProperty("商品库存")
+    private Integer stockNum;
+
+
 }

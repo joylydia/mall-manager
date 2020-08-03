@@ -2,9 +2,12 @@
 package jl.mall.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import jl.mall.common.*;
 import jl.mall.dao.*;
+import jl.mall.dto.MallOrderDTO;
 import jl.mall.entity.*;
+import jl.mall.param.MallOrderItemSearchParam;
 import jl.mall.param.MallOrderSearchParam;
 import jl.mall.service.MallOrderService;
 import jl.mall.util.BeanUtil;
@@ -22,12 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.awt.print.Book;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.*;
 
 @Service
 @Slf4j
@@ -43,12 +47,47 @@ public class MallOrderServiceImpl implements MallOrderService {
     private MallShoppingCartItemMapper mallShoppingCartItemMapper;
     @Autowired
     private MallOrderAddressMapper mallOrderAddressMapper;
+    @Autowired
+    private MallUserMapper mallUserMapper;
 
     @Override
     public PageResult getMallOrdersPage(MallOrderSearchParam pageUtil) {
+        if(!StringUtils.isEmpty(pageUtil.getUserName())){
+            MallUser mallUser = mallUserMapper.selectByLoginName(pageUtil.getUserName().trim());
+            pageUtil.put("userId",mallUser.getUserId());
+        }
+
+        if(!StringUtils.isEmpty(pageUtil.getGoodsName())){
+            MallOrderItemSearchParam searchParam = new MallOrderItemSearchParam(pageUtil);
+            List<MallOrderItem> orderItems = mallOrderItemMapper.selectSearch(searchParam);
+            List<Long> orderIds = orderItems.stream().map(MallOrderItem::getOrderId).collect(Collectors.toList());
+            pageUtil.put("orderIds",orderIds);
+        }
         List<MallOrder> mallOrders = mallOrderMapper.findMallOrderList(pageUtil);
         int total = mallOrderMapper.getTotalMallOrders(pageUtil);
-        PageResult pageResult = new PageResult(mallOrders, total, pageUtil.getLimit(), pageUtil.getPage());
+        List<Long> orderIds = mallOrders.stream().map(MallOrder::getOrderId).collect(Collectors.toList());
+
+        //商品名称
+        List<MallOrderItem> orderItems = mallOrderItemMapper.selectByOrderIds(orderIds);
+        orderItems = orderItems.stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getGoodsId()))),
+                        ArrayList::new));
+        Map<Long,String> orderItemMap = orderItems.stream().collect(Collectors.toMap(MallOrderItem::getOrderId,MallOrderItem::getGoodsName,(entity1,entity2) -> entity1));
+
+        //用户帐号
+        List<MallOrder> userList = mallOrders.stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getUserId()))),
+                ArrayList::new));
+        List<Long> userIdList = userList.stream().map(MallOrder::getUserId).collect(Collectors.toList());
+        String userIds = userIdList.stream().map(String::valueOf).collect(Collectors.joining(","));
+        List<MallUser> users = mallUserMapper.selectByIds(userIds);
+        Map<Long,String> userMap = users.stream().distinct().collect(Collectors.toMap(MallUser::getUserId,MallUser::getLoginName));
+
+        List<MallOrderDTO> dtos = new ArrayList<>(mallOrders.size());
+        for (MallOrder order : mallOrders) {
+            MallOrderDTO dto = new MallOrderDTO(userMap.get(order.getUserId()), orderItemMap.get(order.getOrderId()));
+            BeanUtil.copyProperties(order,dto);
+            dtos.add(dto);
+        }
+        PageResult pageResult = new PageResult(dtos, total, pageUtil.getLimit(), pageUtil.getPage());
         return pageResult;
     }
 
@@ -222,7 +261,6 @@ public class MallOrderServiceImpl implements MallOrderService {
             if (mallShoppingCartItemMapper.deleteBatch(itemIdList) > 0) {
                 List<StockNumDTO> stockNumDTOS = BeanUtil.copyList(myShoppingCartItems, StockNumDTO.class);
 
-                log.info("stockNumDTOS:{}", JSON.toJSONString(stockNumDTOS));
                 int updateStockNumResult = mallGoodsMapper.updateStockNum(stockNumDTOS);
                 if (updateStockNumResult < 1) {
                     MallException.fail(ServiceResultEnum.SHOPPING_ITEM_COUNT_ERROR.getResult());

@@ -49,7 +49,6 @@ public class MallOrderController {
             return ResultGenerator.genFailResult("参数异常！");
         }
         MallOrderSearchParam pageUtil = new MallOrderSearchParam(params);
-        log.info("pageUtil：{}", JSON.toJSONString(pageUtil));
         return ResultGenerator.genSuccessResult(mallOrderService.getMallOrdersPage(pageUtil));
     }
 

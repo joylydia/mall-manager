@@ -1,4 +1,6 @@
 var orderNo = $('#orderNo').val();
+var userName = $('#userName').val();
+var goodsName = $('#goodsName').val();
 var payType = $('#payType').val();
 var orderStatus = $('#orderStatus').val();
 $(function () {
@@ -11,12 +13,14 @@ $(function () {
             {label: '订单总价', name: 'totalPrice', index: 'totalPrice', width: 60},
             {label: '订单状态', name: 'orderStatus', index: 'orderStatus', width: 80, formatter: orderStatusFormatter},
             {label: '支付方式', name: 'payType', index: 'payType', width: 80,formatter:payTypeFormatter},
+            {label: '会员帐号', name: 'loginName', index: 'loginName', width: 80},
+            {label: '商品名称', name: 'goodsName', index: 'goodsName', width: 80},
             {label: '创建时间', name: 'createTime', index: 'createTime', width: 120},
             {label: '操作', name: 'createTime', index: 'createTime', width: 120, formatter: operateFormatter}
         ],
         height: 760,
         rowNum: 20,
-        rowList: [20, 50, 80],
+        rowList: [20, 50, 100],
         styleUI: 'Bootstrap',
         loadtext: '信息读取中...',
         rownumbers: false,
@@ -35,7 +39,7 @@ $(function () {
             rows: "limit",
             order: "order",
         },
-        postData:{"orderNo":orderNo,"payType":payType,"orderStatus":orderStatus},
+        postData:{"orderNo":orderNo,"userName":userName,"goodsName":goodsName,"payType":payType,"orderStatus":orderStatus},
         gridComplete: function () {
             //隐藏grid底部滚动条
             $("#jqGrid").closest(".ui-jqgrid-bdiv").css({"overflow-x": "hidden"});
@@ -87,7 +91,7 @@ $(function () {
             return "支付宝转账";
         }
         if (cellvalue == 2) {
-            return "信转账";
+            return "微信转账";
         }
         if (cellvalue == 3) {
             return "支付宝支付";
@@ -116,11 +120,13 @@ function reload() {
 
 function searchOrderList() {
      orderNo = $('#orderNo').val();
+     userName = $('#userName').val();
+     goodsName = $('#goodsName').val();
      payType = $('#payType').val();
      orderStatus = $('#orderStatus').val();
     var page = $("#jqGrid").jqGrid('getGridParam', 'page');
     $("#jqGrid").jqGrid('setGridParam', {
-        postData:{"orderNo":orderNo,"payType":payType,"orderStatus":orderStatus},
+        postData:{"orderNo":orderNo,"userName":userName,"goodsName":goodsName,"payType":payType,"orderStatus":orderStatus},
         page: page,
     }).trigger("reloadGrid");
 }
