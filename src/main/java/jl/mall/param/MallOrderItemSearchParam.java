@@ -18,7 +18,7 @@ public class MallOrderItemSearchParam extends PageQueryUtil {
         //查询参数
 
         if(!StringUtils.isEmpty(params.get("goodsName").toString())) {
-            this.goodsName = params.get("goodsName").toString();
+            this.goodsName = params.get("goodsName").toString().trim();
         }
     }
 

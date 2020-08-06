@@ -32,7 +32,6 @@
                 and (goods_name like CONCAT('%',#{goodsName},'%'))
             </if>
         </where>
-        group by goods_id
     </select>
 
     <select id="selectByOrderIds" resultMap="BaseResultMap">

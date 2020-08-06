@@ -59,6 +59,7 @@ public class MallOrderServiceImpl implements MallOrderService {
 
         if(!StringUtils.isEmpty(pageUtil.getGoodsName())){
             MallOrderItemSearchParam searchParam = new MallOrderItemSearchParam(pageUtil);
+            searchParam.put("goodsName",pageUtil.getGoodsName());
             List<MallOrderItem> orderItems = mallOrderItemMapper.selectSearch(searchParam);
             List<Long> orderIds = orderItems.stream().map(MallOrderItem::getOrderId).collect(Collectors.toList());
             pageUtil.put("orderIds",orderIds);
@@ -69,9 +70,15 @@ public class MallOrderServiceImpl implements MallOrderService {
 
         //商品名称
         List<MallOrderItem> orderItems = mallOrderItemMapper.selectByOrderIds(orderIds);
-        orderItems = orderItems.stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getGoodsId()))),
-                        ArrayList::new));
-        Map<Long,String> orderItemMap = orderItems.stream().collect(Collectors.toMap(MallOrderItem::getOrderId,MallOrderItem::getGoodsName,(entity1,entity2) -> entity1));
+        Map<Long,String> orderItemMap = new HashMap<>();
+        for (MallOrderItem orderItem: orderItems) {
+            log.info("orderItemId:{},goodsName:{}",orderItem.getOrderItemId(),orderItem.getGoodsName());
+            String goodsName = orderItem.getGoodsName();
+            if(!StringUtils.isEmpty(orderItemMap.get(orderItem.getOrderId()))){
+                goodsName += "," + orderItemMap.get(orderItem.getOrderId());
+            }
+            orderItemMap.put(orderItem.getOrderId() , goodsName);
+        }
 
         //用户帐号
         List<MallOrder> userList = mallOrders.stream().collect(collectingAndThen(toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getUserId()))),

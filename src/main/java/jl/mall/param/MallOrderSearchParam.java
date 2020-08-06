@@ -35,13 +35,13 @@ public class MallOrderSearchParam extends PageQueryUtil {
             this.orderStatus = Integer.parseInt(params.get("orderStatus").toString());
         }
         if(!StringUtils.isEmpty(params.get("orderNo").toString())) {
-            this.orderNo = params.get("orderNo").toString();
+            this.orderNo = params.get("orderNo").toString().trim();
         }
         if(!StringUtils.isEmpty(params.get("userName").toString())) {
-            this.userName = params.get("userName").toString();
+            this.userName = params.get("userName").toString().trim();
         }
         if(!StringUtils.isEmpty(params.get("goodsName").toString())) {
-            this.goodsName = params.get("goodsName").toString();
+            this.goodsName = params.get("goodsName").toString().trim();
         }
 
     }
