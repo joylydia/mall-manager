@@ -114,6 +114,7 @@ public class MallOrderServiceImpl implements MallOrderService {
         return ServiceResultEnum.DATA_NOT_EXIST.getResult();
     }
 
+
     @Override
     @Transactional
     public String checkDone(Long[] ids) {
